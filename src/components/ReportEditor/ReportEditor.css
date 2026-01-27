@@ -139,9 +139,9 @@
 }
 
 .editor-sidebar {
-  width: 300px;
-  min-width: 260px;
-  max-width: 340px;
+  width: 340px;
+  min-width: 300px;
+  max-width: 400px;
   background: var(--editor-surface);
   border-right: 1px solid var(--editor-border);
   display: flex;
@@ -257,8 +257,8 @@
   }
 
   .editor-sidebar {
-    width: 260px;
-    min-width: 240px;
+    width: 300px;
+    min-width: 280px;
   }
 
   .editor-main {

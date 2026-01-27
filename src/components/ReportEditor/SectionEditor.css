@@ -302,6 +302,12 @@
   font-size: 0.875rem;
 }
 
+.metric-values-hint {
+  margin: 0 0 var(--editor-spacing-sm) 0;
+  font-size: 0.8rem;
+  color: var(--editor-text-muted);
+}
+
 .metric-item {
   padding: var(--editor-spacing);
   background: #fff;
@@ -578,7 +584,7 @@
   font-size: 0.85rem;
 }
 
-/* ----- Editores específicos (Meta SEO, Ganhos/Perdas, Concorrentes, Status) ----- */
+/* ----- Editores específicos (Meta SEO, Palavras chave e URLs, Concorrentes, Status) ----- */
 .meta-seo-editor,
 .gains-losses-editor,
 .competitor-analysis-editor,

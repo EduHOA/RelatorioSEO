@@ -38,10 +38,24 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ initialConfig, onSav
       defaultDataForType.comparisonPeriod = 'periodo_anterior';
       defaultDataForType.metrics = [];
     }
+    if (type === 'competitorAnalysis') {
+      defaultDataForType.barGroups = [
+        { label: 'Tráfego orgânico', competitors: [], subtitle: '' },
+        { label: 'Palavras-chave de 1-3', competitors: [], subtitle: '' },
+        { label: 'Palavras-chave de 4-10', competitors: [], subtitle: '' },
+        { label: 'Autoridade do site (DR)', competitors: [], subtitle: '' },
+      ];
+    }
+    if (type === 'gainsLosses') {
+      defaultDataForType.gainsLosses = [
+        { title: 'Crescimento', items: [] },
+        { title: 'Queda', items: [] },
+      ];
+    }
     const newSection: ReportSection = {
       id: `section-${Date.now()}`,
       type,
-      title: type === 'kpiGrid' ? 'Principais Métricas' : type === 'metrics' ? 'Métricas' : `Nova Seção ${type}`,
+      title: type === 'kpiGrid' ? 'Principais Métricas' : type === 'metrics' ? 'Métricas' : type === 'gainsLosses' ? 'Palavras chave e URLs' : type === 'actions' ? 'Ações em andamento' : type === 'statusCards' ? 'Ações finalizadas' : `Nova Seção ${type}`,
       visible: true,
       order: config.sections.length,
       data: defaultDataForType,
@@ -163,6 +177,7 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ initialConfig, onSav
                 onDelete={deleteSection}
                 onReorder={reorderSections}
                 onAdd={addSection}
+                onUpdateSection={updateSection}
               />
             </aside>
             <main className="editor-main">

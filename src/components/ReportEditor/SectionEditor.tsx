@@ -12,15 +12,14 @@ const SECTION_TYPE_LABELS: Record<SectionType, string> = {
   table: 'Tabela',
   image: 'Imagem',
   text: 'Texto',
-  comparison: 'Comparação',
   footer: 'Rodapé',
   metaSEO: 'Meta SEO',
   kpiGrid: 'Grid de KPIs',
-  gainsLosses: 'Ganhos/Perdas',
+  gainsLosses: 'Palavras chave e URLs',
   analysis: 'Análise',
   competitorAnalysis: 'Análise de Concorrentes',
-  statusCards: 'Cards de Status',
-  actions: 'Ações',
+  statusCards: 'Ações finalizadas',
+  actions: 'Ações em andamento',
 };
 
 interface SectionEditorProps {
@@ -230,25 +229,6 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
           </div>
         );
 
-      case 'comparison':
-        return (
-          <div className="editor-form">
-            <label>
-              Título da Seção:
-              <input
-                type="text"
-                value={section.title || ''}
-                onChange={(e) => onUpdate({ title: e.target.value })}
-                placeholder="Comparação de Períodos"
-              />
-            </label>
-            <ComparisonEditor
-              comparisons={localData.comparisons || []}
-              onChange={(comparisons) => updateData('comparisons', comparisons)}
-            />
-          </div>
-        );
-
       case 'footer':
         return (
           <div className="editor-form">
@@ -313,7 +293,7 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
                 type="text"
                 value={section.title || ''}
                 onChange={(e) => onUpdate({ title: e.target.value })}
-                placeholder="Ganhos e Perdas"
+                placeholder="Palavras chave e URLs"
               />
             </label>
             <GainsLossesEditor
@@ -576,7 +556,6 @@ const ChartEditor: React.FC<{ chart: any; onChange: (chart: any) => void }> = ({
 
   const removeDimension = (index: number) => {
     const newLabels = (chartData.labels || []).filter((_: any, i: number) => i !== index);
-    // Remove o valor correspondente de todos os datasets
     const newDatasets = (chartData.datasets || []).map((dataset: any) => ({
       ...dataset,
       data: dataset.data.filter((_: any, i: number) => i !== index)
@@ -584,7 +563,11 @@ const ChartEditor: React.FC<{ chart: any; onChange: (chart: any) => void }> = ({
     onChange({ ...chartData, labels: newLabels, datasets: newDatasets });
   };
 
+  const maxMetricsForLine = 2;
+  const canAddMetric = chartData.type !== 'line' || (chartData.datasets || []).length < maxMetricsForLine;
+
   const addMetric = () => {
+    if (!canAddMetric) return;
     onChange({
       ...chartData,
       datasets: [...(chartData.datasets || []), {
@@ -656,8 +639,20 @@ const ChartEditor: React.FC<{ chart: any; onChange: (chart: any) => void }> = ({
 
       <div className="editor-section">
         <div className="editor-section-header">
-          <h4>Métricas (Séries de Dados)</h4>
-          <button className="btn btn-small" onClick={addMetric}>+ Adicionar Métrica</button>
+          <h4>
+            Métricas (Séries de Dados)
+            {chartData.type === 'line' && (
+              <span className="editor-section-badge">máx. 2</span>
+            )}
+          </h4>
+          <button
+            type="button"
+            className="btn btn-small"
+            onClick={addMetric}
+            disabled={!canAddMetric}
+          >
+            + Adicionar Métrica
+          </button>
         </div>
         {(chartData.datasets || []).map((dataset: any, metricIndex: number) => (
           <div key={metricIndex} className="metric-item">
@@ -898,56 +893,6 @@ const ImageEditor: React.FC<{ images: any[]; onChange: (images: any[]) => void }
   );
 };
 
-const ComparisonEditor: React.FC<{ comparisons: any[]; onChange: (comparisons: any[]) => void }> = ({
-  comparisons,
-  onChange,
-}) => {
-  const addComparison = () => {
-    onChange([...comparisons, { period: '', value: '', change: 0 }]);
-  };
-
-  const updateComparison = (index: number, field: string, value: any) => {
-    const newComparisons = [...comparisons];
-    newComparisons[index] = { ...newComparisons[index], [field]: value };
-    onChange(newComparisons);
-  };
-
-  const removeComparison = (index: number) => {
-    onChange(comparisons.filter((_, i) => i !== index));
-  };
-
-  return (
-    <div className="comparison-editor">
-      <button className="btn btn-small" onClick={addComparison}>+ Adicionar Comparação</button>
-      {comparisons.map((comparison, index) => (
-        <div key={index} className="comparison-editor-item">
-          <input
-            type="text"
-            placeholder="Período"
-            value={comparison.period || ''}
-            onChange={(e) => updateComparison(index, 'period', e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Valor"
-            value={comparison.value || ''}
-            onChange={(e) => updateComparison(index, 'value', e.target.value)}
-          />
-          <input
-            type="number"
-            placeholder="Mudança %"
-            value={comparison.change || 0}
-            onChange={(e) => updateComparison(index, 'change', parseFloat(e.target.value) || 0)}
-          />
-          <button className="btn btn-small btn-danger" onClick={() => removeComparison(index)}>
-            Remover
-          </button>
-        </div>
-      ))}
-    </div>
-  );
-};
-
 const ActionsEditor: React.FC<{ actions: any[]; onChange: (actions: any[]) => void }> = ({
   actions,
   onChange,
@@ -990,6 +935,8 @@ const ActionsEditor: React.FC<{ actions: any[]; onChange: (actions: any[]) => vo
             <option value="andamento">Em andamento</option>
             <option value="iniciar">A iniciar</option>
             <option value="docs">Em documentação</option>
+            <option value="finalizadas">Finalizadas</option>
+            <option value="backlog_priorizado">Backlog priorizado</option>
           </select>
           <button className="btn btn-small btn-danger" onClick={() => removeAction(index)}>
             Remover

@@ -8,7 +8,6 @@ export type SectionType =
   | 'table'
   | 'image'
   | 'text'
-  | 'comparison'
   | 'footer'
   | 'metaSEO'
   | 'kpiGrid'
@@ -129,5 +128,5 @@ export interface StatusCardData {
 export interface ActionItem {
   text: string;
   url?: string;
-  status: 'andamento' | 'iniciar' | 'docs';
+  status: 'andamento' | 'iniciar' | 'docs' | 'finalizadas' | 'backlog_priorizado';
 }

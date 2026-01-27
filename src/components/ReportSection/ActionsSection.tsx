@@ -26,9 +26,12 @@ export const ActionsSection: React.FC<ActionsSectionProps> = ({ section }) => {
                 )}
               </span>
               <span className={`status-tag ${action.status}`}>
-                {action.status === 'andamento' ? 'Em andamento' : 
-                 action.status === 'iniciar' ? 'A iniciar' : 
-                 'Em documentação'}
+                {action.status === 'andamento' ? 'Em andamento' :
+                 action.status === 'iniciar' ? 'A iniciar' :
+                 action.status === 'docs' ? 'Em documentação' :
+                 action.status === 'finalizadas' ? 'Finalizadas' :
+                 action.status === 'backlog_priorizado' ? 'Backlog priorizado' :
+                 action.status || '—'}
               </span>
             </li>
           ))}
