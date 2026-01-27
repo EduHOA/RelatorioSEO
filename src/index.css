@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root {
+  --bg-principal: #f4f6f9;
+  --bg-card: #ffffff;
+  --texto-principal: #333333;
+  --texto-secundario: #666666;
+  --destaque: #ff9a05;
+  --positivo: #28a745;
+  --negativo: #dc3545;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-principal);
+  color: var(--texto-principal);
+  line-height: 1.6;
+  padding: 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* React DatePicker Styles */
+.react-datepicker-popper {
+  z-index: 10000 !important;
+}
+
+.react-datepicker {
+  font-family: 'Poppins', sans-serif;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.react-datepicker__header {
+  background-color: var(--destaque);
+  border-bottom: none;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding-top: 0.75rem;
+}
+
+.react-datepicker__current-month {
+  color: white;
+  font-weight: 600;
+}
+
+.react-datepicker__day-name {
+  color: white;
+  font-weight: 600;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: var(--destaque);
+  border-radius: 4px;
+}
+
+.react-datepicker__day:hover {
+  border-radius: 4px;
+  background-color: #fff9f0;
+}
+
+.react-datepicker__day--in-range {
+  background-color: #fff9f0;
+  border-radius: 0;
+}
+
+.react-datepicker__day--in-selecting-range {
+  background-color: #fff9f0;
+  border-radius: 0;
+}
+
+.react-datepicker__day--range-start,
+.react-datepicker__day--range-end {
+  background-color: var(--destaque);
+  border-radius: 4px;
+  color: white;
+}

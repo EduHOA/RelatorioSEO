@@ -1,0 +1,20 @@
+.report-container {
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+.report-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media print {
+  .report-container {
+    padding: 0;
+  }
+
+  .report-section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}

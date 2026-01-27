@@ -1,0 +1,168 @@
+{
+  "id": "report-example",
+  "name": "Relatório Exemplo - Cliente ABC",
+  "clientName": "Cliente ABC",
+  "period": "Janeiro 2026",
+  "logo": "https://via.placeholder.com/200x80",
+  "colors": {
+    "primary": "#2196F3",
+    "secondary": "#03A9F4",
+    "accent": "#00BCD4",
+    "text": "#FFFFFF",
+    "background": "#F5F5F5"
+  },
+  "sections": [
+    {
+      "id": "header-1",
+      "type": "header",
+      "title": "Relatório de Resultados",
+      "visible": true,
+      "order": 0,
+      "data": {
+        "title": "Relatório de Resultados"
+      }
+    },
+    {
+      "id": "summary-1",
+      "type": "summary",
+      "title": "Resumo Executivo",
+      "visible": true,
+      "order": 1,
+      "data": {
+        "summary": "Este relatório apresenta uma análise detalhada dos resultados obtidos no período, destacando os principais indicadores de performance e resultados alcançados.",
+        "highlights": [
+          "Crescimento de 15.5% no número de visitas",
+          "Aumento de 8.2% nas conversões",
+          "Melhoria na taxa de engajamento",
+          "Atingimento das metas estabelecidas"
+        ]
+      }
+    },
+    {
+      "id": "metrics-1",
+      "type": "metrics",
+      "title": "Principais Métricas",
+      "visible": true,
+      "order": 2,
+      "data": {
+        "metrics": [
+          {
+            "label": "Visitas",
+            "value": "10.234",
+            "change": 15.5,
+            "changeType": "increase"
+          },
+          {
+            "label": "Conversões",
+            "value": "234",
+            "change": 8.2,
+            "changeType": "increase"
+          },
+          {
+            "label": "Taxa de Conversão",
+            "value": "2.3%",
+            "change": -0.5,
+            "changeType": "decrease"
+          },
+          {
+            "label": "Receita",
+            "value": "R$ 45.678",
+            "change": 12.1,
+            "changeType": "increase"
+          }
+        ]
+      }
+    },
+    {
+      "id": "chart-1",
+      "type": "chart",
+      "title": "Evolução Mensal de Visitas",
+      "visible": true,
+      "order": 3,
+      "data": {
+        "chart": {
+          "type": "bar",
+          "labels": ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"],
+          "datasets": [
+            {
+              "label": "Visitas",
+              "data": [8500, 9200, 8800, 9500, 9800, 10234],
+              "color": "#2196F3"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "table-1",
+      "type": "table",
+      "title": "Detalhamento por Canal",
+      "visible": true,
+      "order": 4,
+      "data": {
+        "table": {
+          "headers": ["Canal", "Visitas", "Conversões", "Taxa de Conversão"],
+          "rows": [
+            ["Orgânico", "5.234", "120", "2.3%"],
+            ["Pago", "3.456", "89", "2.6%"],
+            ["Social", "1.544", "25", "1.6%"]
+          ],
+          "footer": ["Total", "10.234", "234", "2.3%"]
+        }
+      }
+    },
+    {
+      "id": "image-1",
+      "type": "image",
+      "title": "Gráficos Adicionais",
+      "visible": true,
+      "order": 5,
+      "data": {
+        "images": [
+          {
+            "id": "img-1",
+            "url": "https://via.placeholder.com/800x400",
+            "alt": "Gráfico de análise",
+            "caption": "Análise detalhada de performance"
+          }
+        ]
+      }
+    },
+    {
+      "id": "comparison-1",
+      "type": "comparison",
+      "title": "Comparação de Períodos",
+      "visible": true,
+      "order": 6,
+      "data": {
+        "comparisons": [
+          {
+            "period": "Mês Anterior",
+            "value": "8.900",
+            "change": 15.0
+          },
+          {
+            "period": "Trimestre Anterior",
+            "value": "7.500",
+            "change": 36.5
+          }
+        ]
+      }
+    },
+    {
+      "id": "footer-1",
+      "type": "footer",
+      "visible": true,
+      "order": 7,
+      "data": {
+        "text": "Relatório gerado pela LiveSEO - Todos os direitos reservados"
+      }
+    }
+  ],
+  "images": [],
+  "metadata": {
+    "createdAt": "2026-01-26T00:00:00.000Z",
+    "updatedAt": "2026-01-26T00:00:00.000Z",
+    "createdBy": "Equipe LiveSEO"
+  }
+}
