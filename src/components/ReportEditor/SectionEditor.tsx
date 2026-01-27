@@ -2,6 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { ReportSection, SectionType } from '../../types/report';
 import './SectionEditor.css';
 
+const SECTION_TYPE_LABELS: Record<SectionType, string> = {
+  header: 'Cabeçalho',
+  summary: 'Resumo',
+  metrics: 'Métricas',
+  chart: 'Gráfico',
+  table: 'Tabela',
+  image: 'Imagem',
+  text: 'Texto',
+  comparison: 'Comparação',
+  footer: 'Rodapé',
+  metaSEO: 'Meta SEO',
+  kpiGrid: 'Grid de KPIs',
+  gainsLosses: 'Ganhos/Perdas',
+  analysis: 'Análise',
+  competitorAnalysis: 'Análise de Concorrentes',
+  statusCards: 'Cards de Status',
+  actions: 'Ações',
+};
+
 interface SectionEditorProps {
   section: ReportSection;
   onUpdate: (updates: Partial<ReportSection>) => void;
@@ -350,17 +369,22 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
   return (
     <div className="section-editor">
       <div className="editor-header-section">
-        <h3>Editando: {section.type}</h3>
+        <div className="editor-header-title">
+          <span className="editor-section-badge">{SECTION_TYPE_LABELS[section.type]}</span>
+          <h3>{section.title || SECTION_TYPE_LABELS[section.type]}</h3>
+        </div>
         <label className="toggle-visibility">
           <input
             type="checkbox"
             checked={section.visible}
             onChange={(e) => onUpdate({ visible: e.target.checked })}
           />
-          Visível no relatório
+          <span>Visível no relatório</span>
         </label>
       </div>
-      {renderEditor()}
+      <div className="editor-body">
+        {renderEditor()}
+      </div>
     </div>
   );
 };

@@ -3,7 +3,6 @@ import { Home } from './components/Home/Home';
 import { ClientSetup } from './components/ClientSetup/ClientSetup';
 import { ReportEditor } from './components/ReportEditor/ReportEditor';
 import { ReportConfig } from './types/report';
-import { createDefaultReport } from './utils/reportTemplates';
 import { exportToPDF, exportToHTML } from './utils/exportUtils';
 import './App.css';
 

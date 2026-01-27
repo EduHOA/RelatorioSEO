@@ -1,16 +1,47 @@
+/* ========== Relatório (visualização / documento) ========== */
+/* Alinhado ao padrão do template HTML: body + .container max-width 1200px */
 .report-container {
   min-height: 100vh;
   font-family: 'Poppins', sans-serif;
+  background-color: var(--bg-principal, #f4f6f9);
+  color: var(--texto-principal, #333);
+  line-height: 1.6;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .report-content {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Dentro do preview-paper (editor) mantém o mesmo padrão de conteúdo */
+.preview-paper .report-container {
+  background-color: #fff;
+  padding: 20px;
+}
+
+.preview-paper .report-content {
+  max-width: 1200px;
+  padding: 0;
+}
+
+/* Transição suave ao rolar */
+.report-container {
+  scroll-behavior: smooth;
 }
 
 @media print {
   .report-container {
     padding: 0;
+    min-height: auto;
+  }
+
+  .report-content {
+    padding: 0;
+    max-width: 100%;
   }
 
   .report-section {

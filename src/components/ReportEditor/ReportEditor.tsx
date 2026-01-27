@@ -91,32 +91,52 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ initialConfig, onSav
 
   return (
     <div className="report-editor">
-      <div className="editor-header">
-        <h1>Editor de Relatórios - LiveSEO</h1>
-        <div className="editor-actions">
+      <header className="editor-header">
+        <div className="editor-header-left">
+          <span className="editor-brand">LiveSEO</span>
+          <span className="editor-title">{config.clientName} · {config.period}</span>
+        </div>
+        <div className="editor-tabs">
           <button
-            className="btn btn-secondary"
-            onClick={() => setPreviewMode(!previewMode)}
+            type="button"
+            className={`editor-tab ${previewMode ? 'active' : ''}`}
+            onClick={() => setPreviewMode(true)}
+            aria-pressed={previewMode}
           >
-            {previewMode ? 'Editar' : 'Visualizar'}
+            <span className="tab-icon">👁</span>
+            Visualizar
           </button>
           <button
+            type="button"
+            className={`editor-tab ${!previewMode ? 'active' : ''}`}
+            onClick={() => setPreviewMode(false)}
+            aria-pressed={!previewMode}
+          >
+            <span className="tab-icon">✏️</span>
+            Editar
+          </button>
+        </div>
+        <div className="editor-actions">
+          <button
+            type="button"
             className="btn btn-primary"
             onClick={() => onSave(config)}
           >
-            Salvar Relatório
+            Salvar relatório
           </button>
         </div>
-      </div>
+      </header>
 
       <div className="editor-content">
         {previewMode ? (
-          <div className="preview-container">
-            <ReportRenderer config={config} />
+          <div className="preview-wrapper">
+            <div className="preview-paper">
+              <ReportRenderer config={config} />
+            </div>
           </div>
         ) : (
-          <>
-            <div className="editor-sidebar">
+          <div className="editor-split">
+            <aside className="editor-sidebar">
               <SectionList
                 sections={config.sections}
                 selectedId={selectedSectionId}
@@ -131,9 +151,8 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ initialConfig, onSav
                 onReorder={reorderSections}
                 onAdd={addSection}
               />
-            </div>
-
-            <div className="editor-main">
+            </aside>
+            <main className="editor-main">
               {selectedSection ? (
                 <SectionEditor
                   section={selectedSection}
@@ -141,11 +160,13 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ initialConfig, onSav
                 />
               ) : (
                 <div className="no-selection">
-                  <p>Selecione uma seção para editar ou adicione uma nova seção</p>
+                  <div className="no-selection-illustration">📄</div>
+                  <h3>Selecione uma seção</h3>
+                  <p>Clique em uma seção na barra lateral para editar o conteúdo, ou adicione uma nova seção.</p>
                 </div>
               )}
-            </div>
-          </>
+            </main>
+          </div>
         )}
       </div>
     </div>

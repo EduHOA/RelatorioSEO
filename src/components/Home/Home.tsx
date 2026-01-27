@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { ReportConfig } from '../../types/report';
-import { createDefaultReport } from '../../utils/reportTemplates';
 import './Home.css';
 
 interface HomeProps {
