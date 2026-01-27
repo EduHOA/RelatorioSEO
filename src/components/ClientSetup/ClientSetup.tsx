@@ -80,9 +80,11 @@ export const ClientSetup: React.FC<ClientSetupProps> = ({ onComplete, onBack }) 
 
     const headerSection = config.sections.find(s => s.type === 'header');
     if (headerSection) {
+      headerSection.data.clientName = formData.clientName;
       headerSection.data.domain = formData.domain;
       headerSection.data.periodInfo = formData.period;
       headerSection.data.comparisonPeriod = formData.comparisonPeriod;
+      headerSection.data.logo = formData.logo || config.logo || '';
     }
 
     onComplete(config);

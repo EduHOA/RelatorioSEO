@@ -151,8 +151,9 @@
 
 .editor-main {
   flex: 1;
+  overflow-x: auto;
   overflow-y: auto;
-  background: var(--editor-surface);
+  background: #f5f7fa;
   padding: 1.5rem 2rem;
   min-width: 0;
 }

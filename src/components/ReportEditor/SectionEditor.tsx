@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ReportSection, SectionType } from '../../types/report';
 import './SectionEditor.css';
 
+export type MetricsComparisonPeriod = 'periodo_anterior' | 'ano_anterior' | 'ambos';
+
 const SECTION_TYPE_LABELS: Record<SectionType, string> = {
   header: 'Cabeçalho',
   summary: 'Resumo',
@@ -45,13 +47,50 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
         return (
           <div className="editor-form">
             <label>
-              Título:
+              Nome do cliente / Título:
               <input
                 type="text"
-                value={localData.title || ''}
-                onChange={(e) => updateData('title', e.target.value)}
-                placeholder="Título do Relatório"
+                value={localData.clientName ?? ''}
+                onChange={(e) => updateData('clientName', e.target.value)}
+                placeholder="Ex: GZV Solutions"
               />
+            </label>
+            <label>
+              Domínio (texto em “Relatório de desempenho do domínio…”):
+              <input
+                type="text"
+                value={localData.domain ?? ''}
+                onChange={(e) => updateData('domain', e.target.value)}
+                placeholder="Ex: gzvsolutions.com.br"
+              />
+            </label>
+            <label>
+              Período de análise:
+              <input
+                type="text"
+                value={localData.periodInfo ?? ''}
+                onChange={(e) => updateData('periodInfo', e.target.value)}
+                placeholder="Ex: 01/01/2026 a 31/01/2026"
+              />
+            </label>
+            <label>
+              Período de comparação:
+              <input
+                type="text"
+                value={localData.comparisonPeriod ?? ''}
+                onChange={(e) => updateData('comparisonPeriod', e.target.value)}
+                placeholder="Ex: Ano anterior"
+              />
+            </label>
+            <label>
+              URL do logo:
+              <input
+                type="url"
+                value={localData.logo ?? ''}
+                onChange={(e) => updateData('logo', e.target.value)}
+                placeholder="https://exemplo.com/logo.png"
+              />
+              <small className="form-hint">Deixe em branco para usar o logo padrão da LiveSEO.</small>
             </label>
           </div>
         );
@@ -104,6 +143,8 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
             <MetricsEditor
               metrics={localData.metrics || []}
               onChange={(metrics) => updateData('metrics', metrics)}
+              comparisonPeriod={(localData.comparisonPeriod as MetricsComparisonPeriod) || 'periodo_anterior'}
+              onComparisonPeriodChange={(v) => updateData('comparisonPeriod', v)}
             />
           </div>
         );
@@ -257,6 +298,8 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
             <MetricsEditor
               metrics={localData.metrics || []}
               onChange={(metrics) => updateData('metrics', metrics)}
+              comparisonPeriod={(localData.comparisonPeriod as MetricsComparisonPeriod) || 'periodo_anterior'}
+              onComparisonPeriodChange={(v) => updateData('comparisonPeriod', v)}
             />
           </div>
         );
@@ -383,7 +426,9 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
         </label>
       </div>
       <div className="editor-body">
-        {renderEditor()}
+        <div className="editor-form-panel">
+          {renderEditor()}
+        </div>
       </div>
     </div>
   );
@@ -391,9 +436,16 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
 
 // Componentes auxiliares para edição de dados específicos
 
-const MetricsEditor: React.FC<{ metrics: any[]; onChange: (metrics: any[]) => void }> = ({
+const MetricsEditor: React.FC<{
+  metrics: any[];
+  onChange: (metrics: any[]) => void;
+  comparisonPeriod?: MetricsComparisonPeriod;
+  onComparisonPeriodChange?: (value: MetricsComparisonPeriod) => void;
+}> = ({
   metrics,
   onChange,
+  comparisonPeriod = 'periodo_anterior',
+  onComparisonPeriodChange,
 }) => {
   const updateMetric = (index: number, field: string, value: any) => {
     const newMetrics = [...metrics];
@@ -411,9 +463,25 @@ const MetricsEditor: React.FC<{ metrics: any[]; onChange: (metrics: any[]) => vo
 
   return (
     <div className="metrics-editor">
+      {onComparisonPeriodChange && (
+        <div className="metrics-comparison-option">
+          <label>
+            Período de comparação dos dados <span className="form-hint">(vale para todas as métricas)</span>
+            <select
+              value={comparisonPeriod}
+              onChange={(e) => onComparisonPeriodChange(e.target.value as MetricsComparisonPeriod)}
+              className="metrics-comparison-select"
+            >
+              <option value="periodo_anterior">Período anterior</option>
+              <option value="ano_anterior">Ano anterior</option>
+              <option value="ambos">Ambos</option>
+            </select>
+          </label>
+        </div>
+      )}
       <button className="btn btn-small" onClick={addMetric}>+ Adicionar Métrica</button>
       {metrics.map((metric, index) => (
-        <div key={index} className="metric-editor-item">
+        <div key={index} className={`metric-editor-item ${comparisonPeriod === 'ambos' ? 'metric-editor-item-ambos' : ''}`}>
           <input
             type="text"
             placeholder="Label"
@@ -426,23 +494,61 @@ const MetricsEditor: React.FC<{ metrics: any[]; onChange: (metrics: any[]) => vo
             value={metric.value || ''}
             onChange={(e) => updateMetric(index, 'value', e.target.value)}
           />
-          <input
-            type="number"
-            placeholder="Mudança %"
-            value={metric.change || 0}
-            onChange={(e) => updateMetric(index, 'change', parseFloat(e.target.value) || 0)}
-          />
-          <select
-            value={metric.changeType || 'neutral'}
-            onChange={(e) => updateMetric(index, 'changeType', e.target.value)}
-          >
-            <option value="increase">Aumento</option>
-            <option value="decrease">Queda</option>
-            <option value="neutral">Neutro</option>
-          </select>
-          <button className="btn btn-small btn-danger" onClick={() => removeMetric(index)}>
-            Remover
-          </button>
+          <div className="metric-comparisons-cell">
+            <div className="metric-comparison-row">
+              <span className="metric-comparison-label">
+                {comparisonPeriod === 'ano_anterior' ? 'Ano ant.' : 'Período ant.'}
+              </span>
+              <span className="metric-change-wrapper">
+                <input
+                  type="number"
+                  placeholder="0"
+                  value={metric.change == null ? '' : metric.change}
+                  onChange={(e) => updateMetric(index, 'change', e.target.value === '' ? 0 : (parseFloat(e.target.value) || 0))}
+                  className="metric-change-input"
+                />
+                <span className="metric-change-unit">%</span>
+              </span>
+              <select
+                value={metric.changeType || 'neutral'}
+                onChange={(e) => updateMetric(index, 'changeType', e.target.value)}
+                title="Aumento, Neutro ou Queda"
+              >
+                <option value="increase">Aumento</option>
+                <option value="decrease">Queda</option>
+                <option value="neutral">Neutro</option>
+              </select>
+            </div>
+            {comparisonPeriod === 'ambos' && (
+              <div className="metric-comparison-row">
+                <span className="metric-comparison-label">Ano ant.</span>
+                <span className="metric-change-wrapper">
+                  <input
+                    type="number"
+                    placeholder="0"
+                    value={metric.changeAnoAnterior == null ? '' : metric.changeAnoAnterior}
+                    onChange={(e) => updateMetric(index, 'changeAnoAnterior', e.target.value === '' ? 0 : (parseFloat(e.target.value) || 0))}
+                    className="metric-change-input"
+                  />
+                  <span className="metric-change-unit">%</span>
+                </span>
+                <select
+                  value={metric.changeTypeAnoAnterior || 'neutral'}
+                  onChange={(e) => updateMetric(index, 'changeTypeAnoAnterior', e.target.value)}
+                  title="Aumento, Neutro ou Queda (ano anterior)"
+                >
+                  <option value="increase">Aumento</option>
+                  <option value="decrease">Queda</option>
+                  <option value="neutral">Neutro</option>
+                </select>
+              </div>
+            )}
+          </div>
+          <div className="metric-actions-cell">
+            <button className="btn btn-small btn-danger" onClick={() => removeMetric(index)}>
+              Remover
+            </button>
+          </div>
         </div>
       ))}
     </div>

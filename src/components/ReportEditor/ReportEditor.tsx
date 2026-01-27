@@ -16,22 +16,35 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ initialConfig, onSav
   const [previewMode, setPreviewMode] = useState(true);
 
   const updateSection = (sectionId: string, updates: Partial<ReportSection>) => {
-    setConfig(prev => ({
-      ...prev,
-      sections: prev.sections.map(section =>
+    setConfig(prev => {
+      const sections = prev.sections.map(section =>
         section.id === sectionId ? { ...section, ...updates } : section
-      ),
-    }));
+      );
+      const next = { ...prev, sections };
+      const updatedSection = sections.find(s => s.id === sectionId);
+      if (updatedSection?.type === 'header' && updatedSection.data) {
+        const d = updatedSection.data as Record<string, unknown>;
+        if (d.clientName !== undefined) next.clientName = String(d.clientName);
+        if (d.periodInfo !== undefined) next.period = String(d.periodInfo);
+        if (d.logo !== undefined) next.logo = d.logo ? String(d.logo) : next.logo;
+      }
+      return next;
+    });
   };
 
   const addSection = (type: ReportSection['type']) => {
+    const defaultDataForType: Record<string, unknown> = {};
+    if (type === 'metrics' || type === 'kpiGrid') {
+      defaultDataForType.comparisonPeriod = 'periodo_anterior';
+      defaultDataForType.metrics = [];
+    }
     const newSection: ReportSection = {
       id: `section-${Date.now()}`,
       type,
-      title: `Nova Seção ${type}`,
+      title: type === 'kpiGrid' ? 'Principais Métricas' : type === 'metrics' ? 'Métricas' : `Nova Seção ${type}`,
       visible: true,
       order: config.sections.length,
-      data: {},
+      data: defaultDataForType,
     };
 
     setConfig(prev => ({

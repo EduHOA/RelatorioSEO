@@ -200,6 +200,19 @@
   color: var(--negativo);
 }
 
+/* Duas linhas de comparação no KPI quando período = "ambos" (abaixo do big number) */
+.kpi-variations {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 5px;
+  text-align: center;
+}
+
+.kpi-variations .kpi-variation {
+  margin-top: 0;
+}
+
 /* Gains/Losses Section */
 .data-row {
   display: flex;
@@ -825,6 +838,13 @@
 }
 
 /* Metrics Section */
+.metrics-section .metrics-comparison-hint {
+  font-size: 0.85rem;
+  color: var(--texto-secundario);
+  margin: -8px 0 16px 0;
+  font-weight: 500;
+}
+
 .metrics-section .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -870,9 +890,49 @@
 .metric-change.neutral {
   color: var(--texto-secundario);
 }
-  border-radius: 15px;
-  box-shadow: var(--shadow);
-  margin: 20px 0;
+
+/* Duas linhas de comparação quando período = "ambos" (abaixo do big number) */
+.metric-changes.metric-changes-dual {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+  text-align: center;
+}
+
+.metric-changes-dual .metric-change-line {
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.metric-changes-dual .metric-change-context {
+  font-weight: 500;
+  color: var(--texto-secundario);
+  font-size: 0.8rem;
+}
+
+/* Linha única de comparação (período ou ano anterior) */
+.metric-change-line-single {
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-top: 4px;
+  text-align: center;
+}
+
+.metric-change-line-single .metric-change-context {
+  font-weight: 500;
+  color: var(--texto-secundario);
+  font-size: 0.8rem;
 }
 
 .analysis-section h3 {

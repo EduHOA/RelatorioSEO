@@ -21,9 +21,11 @@ export const createDefaultReport = (clientName: string, period: string): ReportC
         visible: true,
         order: 0,
         data: {
+          clientName,
           domain: '',
           periodInfo: period,
           comparisonPeriod: 'Ano anterior',
+          logo: 'https://www.linx.com.br/app/uploads/2022/07/liveSEO-logo-aplicacao-principal-1-1.png',
         },
       },
       {
@@ -63,6 +65,7 @@ export const createDefaultReport = (clientName: string, period: string): ReportC
         visible: true,
         order: 2,
         data: {
+          comparisonPeriod: 'periodo_anterior',
           metrics: [
             {
               label: 'Cliques',

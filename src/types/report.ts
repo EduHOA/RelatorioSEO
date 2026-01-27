@@ -62,6 +62,10 @@ export interface MetricData {
   value: string | number;
   change?: number;
   changeType?: 'increase' | 'decrease' | 'neutral';
+  /** Usado quando comparisonPeriod === 'ambos': % vs. ano anterior */
+  changeAnoAnterior?: number;
+  /** Usado quando comparisonPeriod === 'ambos': tipo vs. ano anterior */
+  changeTypeAnoAnterior?: 'increase' | 'decrease' | 'neutral';
   icon?: string;
 }
 
