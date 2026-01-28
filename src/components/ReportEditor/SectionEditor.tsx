@@ -115,15 +115,42 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
                 rows={5}
               />
             </label>
-            <label>
-              Destaques (um por linha):
-              <textarea
-                value={(localData.highlights || []).join('\n')}
-                onChange={(e) => updateData('highlights', e.target.value.split('\n').filter(h => h.trim()))}
-                placeholder="Destaque 1&#10;Destaque 2"
-                rows={5}
-              />
-            </label>
+            <div className="editor-section">
+              <div className="editor-section-header">
+                <h4>Destaques</h4>
+                <button
+                  type="button"
+                  className="btn btn-small"
+                  onClick={() => updateData('highlights', [...(localData.highlights || []), ''])}
+                >
+                  + Adicionar Destaque
+                </button>
+              </div>
+              <p className="form-hint summary-highlights-hint">
+                Adicione os tópicos em destaque do relatório. Cada item aparece como um bullet no resumo.
+              </p>
+              {(localData.highlights || []).map((highlight: string, index: number) => (
+                <div key={index} className="dimension-item highlight-item-editor">
+                  <input
+                    type="text"
+                    value={highlight}
+                    onChange={(e) => {
+                      const next = [...(localData.highlights || [])];
+                      next[index] = e.target.value;
+                      updateData('highlights', next);
+                    }}
+                    placeholder={`Destaque ${index + 1}`}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-small btn-danger"
+                    onClick={() => updateData('highlights', (localData.highlights || []).filter((_: string, i: number) => i !== index))}
+                  >
+                    Remover
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         );
 
