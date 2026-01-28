@@ -7,7 +7,6 @@ import { ChartSection } from './ReportSection/ChartSection';
 import { TableSection } from './ReportSection/TableSection';
 import { ImageSection } from './ReportSection/ImageSection';
 import { TextSection } from './ReportSection/TextSection';
-import { ComparisonSection } from './ReportSection/ComparisonSection';
 import { FooterSection } from './ReportSection/FooterSection';
 import { MetaSEOSection } from './ReportSection/MetaSEOSection';
 import { KPIGridSection } from './ReportSection/KPIGridSection';
@@ -63,9 +62,6 @@ export const ReportRenderer: React.FC<ReportRendererProps> = ({ config }) => {
 
       case 'text':
         return <TextSection key={section.id} section={section} />;
-
-      case 'comparison':
-        return <ComparisonSection key={section.id} {...commonProps} />;
 
       case 'footer':
         return (

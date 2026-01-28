@@ -8,7 +8,9 @@ interface SummarySectionProps {
 
 export const SummarySection: React.FC<SummarySectionProps> = ({ section }) => {
   const summary = section.data.summary || '';
-  const highlights = section.data.highlights || [];
+  const highlights = (section.data.highlights || []).filter(
+    (h: string) => h != null && String(h).trim() !== ''
+  );
 
   return (
     <section className="report-section summary-section">
