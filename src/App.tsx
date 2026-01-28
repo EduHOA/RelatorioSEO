@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   HashRouter,
   Routes,
@@ -12,31 +12,36 @@ import { ClientSetup } from './components/ClientSetup/ClientSetup';
 import { ReportEditor } from './components/ReportEditor/ReportEditor';
 import { ReportConfig } from './types/report';
 import { exportToPDF, exportToHTML } from './utils/exportUtils';
+import { getReportHistory, saveReportToHistory } from './utils/reportHistory';
+import { Modal } from './components/Modal/Modal';
 import { ROUTES } from './routes';
 import './App.css';
 
-const STORAGE_KEY = 'liveseo-report-config';
-
 function persistConfig(config: ReportConfig) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+  saveReportToHistory(config);
 }
 
-function loadConfigFromStorage(): ReportConfig | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as ReportConfig) : null;
-  } catch {
-    return null;
-  }
+function LoadingOverlay() {
+  return (
+    <div className="app-loading-overlay" role="status" aria-live="polite">
+      <div className="app-loading-spinner" />
+      <p className="app-loading-text">Carregando relatório...</p>
+    </div>
+  );
 }
 
-function HomePage() {
+function HomePage({ setLoading }: { setLoading: (v: boolean) => void }) {
   const navigate = useNavigate();
 
   return (
     <Home
       onNewReport={() => navigate(ROUTES.NEW_REPORT)}
       onLoadReport={(config) => {
+        setLoading(true);
+        navigate(ROUTES.EDITOR, { state: { config } });
+      }}
+      onImportReport={(config) => {
+        setLoading(true);
         persistConfig(config);
         navigate(ROUTES.EDITOR, { state: { config } });
       }}
@@ -44,12 +49,13 @@ function HomePage() {
   );
 }
 
-function ClientSetupPage() {
+function ClientSetupPage({ setLoading }: { setLoading: (v: boolean) => void }) {
   const navigate = useNavigate();
 
   return (
     <ClientSetup
       onComplete={(config) => {
+        setLoading(true);
         persistConfig(config);
         navigate(ROUTES.EDITOR, { state: { config } });
       }}
@@ -58,26 +64,37 @@ function ClientSetupPage() {
   );
 }
 
-function EditorPage() {
+function EditorPage({ setLoading }: { setLoading: (v: boolean) => void }) {
   const navigate = useNavigate();
   const location = useLocation();
   const stateConfig = (location.state as { config?: ReportConfig } | undefined)?.config;
-  const [config, setConfig] = useState<ReportConfig | null>(
-    () => stateConfig ?? loadConfigFromStorage()
-  );
+  const [config, setConfig] = useState<ReportConfig | null>(() => {
+    if (stateConfig) return stateConfig;
+    const history = getReportHistory();
+    return history.length > 0 ? history[0] : null;
+  });
+  const [savedModalOpen, setSavedModalOpen] = useState(false);
+  const [pdfSavedFilename, setPdfSavedFilename] = useState<string | null>(null);
+  const [htmlSavedFilename, setHtmlSavedFilename] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(false);
+  }, [setLoading]);
 
   const handleSave = (newConfig: ReportConfig) => {
     setConfig(newConfig);
     persistConfig(newConfig);
-    alert('Relatório salvo com sucesso!');
+    setSavedModalOpen(true);
   };
 
   const handleExportPDF = async () => {
     if (!config) return;
+    const filename = `relatorio-${config.clientName}-${Date.now()}.pdf`;
     try {
       const reportContainer = document.getElementById('report-export');
       if (reportContainer) {
-        await exportToPDF('report-export', `relatorio-${config.clientName}-${Date.now()}.pdf`);
+        await exportToPDF('report-export', filename);
+        setPdfSavedFilename(filename);
       } else {
         alert('Nenhum relatório encontrado para exportar. Certifique-se de estar no modo de visualização.');
       }
@@ -90,6 +107,7 @@ function EditorPage() {
   const handleExportHTML = () => {
     if (!config) return;
     const reportContainer = document.querySelector('.report-container');
+    const filename = `relatorio-${config.clientName}-${Date.now()}.html`;
     if (reportContainer) {
       const htmlContent = `
 <!DOCTYPE html>
@@ -117,7 +135,8 @@ function EditorPage() {
 </body>
 </html>
       `;
-      exportToHTML(htmlContent, `relatorio-${config.clientName}-${Date.now()}.html`);
+      exportToHTML(htmlContent, filename);
+      setHtmlSavedFilename(filename);
     }
   };
 
@@ -144,26 +163,86 @@ function EditorPage() {
           Exportar HTML
         </button>
       </div>
+
+      <Modal
+        open={savedModalOpen}
+        onClose={() => setSavedModalOpen(false)}
+        title="Relatório salvo"
+        message="As alterações foram salvas com sucesso. O relatório foi atualizado no histórico."
+        variant="success"
+        confirmLabel="OK"
+      />
+
+      <Modal
+        open={pdfSavedFilename !== null}
+        onClose={() => setPdfSavedFilename(null)}
+        title="PDF salvo"
+        message={
+          pdfSavedFilename ? (
+            <>
+              O relatório foi exportado em PDF com sucesso.
+              <br />
+              <br />
+              Arquivo: <strong>{pdfSavedFilename}</strong>
+              <br />
+              O arquivo foi salvo na pasta de Downloads do seu navegador (ou na pasta padrão de
+              download configurada).
+            </>
+          ) : (
+            ''
+          )
+        }
+        variant="success"
+        confirmLabel="OK"
+      />
+
+      <Modal
+        open={htmlSavedFilename !== null}
+        onClose={() => setHtmlSavedFilename(null)}
+        title="HTML salvo"
+        message={
+          htmlSavedFilename ? (
+            <>
+              O relatório foi exportado em HTML com sucesso.
+              <br />
+              <br />
+              Arquivo: <strong>{htmlSavedFilename}</strong>
+              <br />
+              O arquivo foi salvo na pasta de Downloads do seu navegador (ou na pasta padrão de
+              download configurada).
+            </>
+          ) : (
+            ''
+          )
+        }
+        variant="success"
+        confirmLabel="OK"
+      />
     </div>
   );
 }
 
-function AppRoutes() {
+function AppRoutes({ setLoading }: { setLoading: (v: boolean) => void }) {
   return (
     <Routes>
-      <Route path={ROUTES.HOME} element={<HomePage />} />
-      <Route path={ROUTES.NEW_REPORT} element={<ClientSetupPage />} />
-      <Route path={ROUTES.EDITOR} element={<EditorPage />} />
+      <Route path={ROUTES.HOME} element={<HomePage setLoading={setLoading} />} />
+      <Route path={ROUTES.NEW_REPORT} element={<ClientSetupPage setLoading={setLoading} />} />
+      <Route path={ROUTES.EDITOR} element={<EditorPage setLoading={setLoading} />} />
       <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
     </Routes>
   );
 }
 
 function App() {
+  const [isLoading, setIsLoading] = useState(false);
+
   return (
-    <HashRouter>
-      <AppRoutes />
-    </HashRouter>
+    <>
+      {isLoading && <LoadingOverlay />}
+      <HashRouter>
+        <AppRoutes setLoading={setIsLoading} />
+      </HashRouter>
+    </>
   );
 }
 
