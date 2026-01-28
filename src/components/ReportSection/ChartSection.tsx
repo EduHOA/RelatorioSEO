@@ -86,7 +86,7 @@ export const ChartSection: React.FC<ChartSectionProps> = ({ section, colors }) =
               role="img"
               aria-label="Gráfico de barras: passe o mouse para ver os dados"
             >
-              {chartData.labels.map((label, index) => (
+              {chartData.labels.map((_, index) => (
                 <div key={index} className="bar-chart-column">
                   <div className="bar-chart-column-bars" style={{ height: plotHeight }}>
                     {chartData.datasets.map((dataset, dsIndex) => {
