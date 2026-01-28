@@ -21,8 +21,8 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ section, config })
     <footer 
       className="report-footer"
       style={{ 
-        backgroundColor: config.colors.primary,
-        color: config.colors.text 
+        backgroundColor: 'transparent',
+        color: config.colors.primary 
       }}
     >
       <div className="footer-content">

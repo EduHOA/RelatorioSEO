@@ -9,7 +9,7 @@ interface TableSectionProps {
   };
 }
 
-export const TableSection: React.FC<TableSectionProps> = ({ section, colors }) => {
+export const TableSection: React.FC<TableSectionProps> = ({ section }) => {
   const tableData: TableData = section.data.table || {
     headers: [],
     rows: []

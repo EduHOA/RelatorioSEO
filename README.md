@@ -20,7 +20,7 @@ npm install
 ## 🏃 Executar
 
 ```bash
-# Modo desenvolvimento
+# Modo desenvolvimento (navegador)
 npm run dev
 
 # Build para produção
@@ -28,7 +28,22 @@ npm run build
 
 # Preview da build
 npm run preview
+
+# Rodar como aplicativo de desktop (Electron)
+npm run electron:dev
+
+# Gerar executável (.exe no Windows)
+npm run electron:build
 ```
+
+### 📱 Rodar como executável no PC
+
+A aplicação pode ser usada como app de desktop e gerar um instalador:
+
+- **`npm run electron:dev`** – Abre a app em uma janela do Electron (sem abrir o navegador). O Vite segue em modo dev e a janela recarrega automaticamente.
+- **`npm run electron:build`** – Gera o instalador em `release/`. No Windows aparece um `.exe` (instalador NSIS) que pode ser instalado e aberto como qualquer programa.
+
+Após instalar, o atalho fica no Menu Iniciar e na Área de Trabalho (se marcado na instalação).
 
 ## 📖 Como Usar
 
