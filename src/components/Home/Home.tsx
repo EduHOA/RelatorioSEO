@@ -74,10 +74,10 @@ export const Home: React.FC<HomeProps> = ({ onNewReport, onLoadReport, onImportR
         <div className="home-header">
           <img
             src="https://www.linx.com.br/app/uploads/2022/07/liveSEO-logo-aplicacao-principal-1-1.png"
-            alt="LiveSEO"
+            alt="Relatórios LiveSEO"
             className="home-logo"
           />
-          <h1>Sistema de Relatórios</h1>
+          <h1>Relatórios LiveSEO</h1>
           <p className="home-subtitle">Crie e personalize relatórios de análise de resultados</p>
         </div>
 

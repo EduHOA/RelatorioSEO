@@ -1,12 +1,16 @@
 .client-setup {
   min-height: 100vh;
+  min-height: 100dvh;
   background: linear-gradient(135deg, #f4f6f9 0%, #e8ecf1 100%);
-  padding: 2rem;
+  padding: clamp(1rem, 4vw, 2rem);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
 }
 
 .setup-header {
-  max-width: 1000px;
-  margin: 0 auto 2rem;
+  max-width: min(1000px, 100%);
+  margin: 0 auto clamp(1rem, 3vw, 2rem);
 }
 
 .btn-back {
@@ -25,7 +29,7 @@
 }
 
 .setup-header h1 {
-  font-size: 2rem;
+  font-size: clamp(1.35rem, 4vw, 2rem);
   color: var(--texto-principal);
   margin-bottom: 0.5rem;
   font-weight: 700;
@@ -33,16 +37,17 @@
 
 .setup-description {
   color: var(--texto-secundario);
-  font-size: 0.95rem;
-  margin-bottom: 2rem;
+  font-size: clamp(0.875rem, 2vw, 0.95rem);
+  margin-bottom: clamp(1rem, 3vw, 2rem);
 }
 
 .step-indicator {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: clamp(0.5rem, 2vw, 1rem);
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+  flex-wrap: wrap;
 }
 
 .step {
@@ -95,14 +100,15 @@
 }
 
 .setup-content {
-  max-width: 800px;
+  max-width: min(800px, 100%);
   margin: 0 auto;
+  width: 100%;
 }
 
 .setup-form {
   background: var(--bg-card);
-  border-radius: 15px;
-  padding: 2.5rem;
+  border-radius: clamp(10px, 2vw, 15px);
+  padding: clamp(1.25rem, 4vw, 2.5rem);
   box-shadow: var(--shadow);
 }
 
@@ -432,8 +438,21 @@
 }
 
 @media (max-width: 768px) {
+  .client-setup {
+    padding: 1rem;
+  }
+
+  .setup-header {
+    margin-bottom: 1rem;
+  }
+
+  .setup-header h1 {
+    font-size: 1.5rem;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
+    gap: 0;
   }
 
   .date-range-picker {
@@ -448,5 +467,47 @@
     width: 2px;
     height: 40px;
     margin-top: 0;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+  }
+
+  .setup-form {
+    padding: 1.25rem;
+  }
+
+  .form-section {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .client-setup {
+    padding: 0.75rem;
+  }
+
+  .setup-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .setup-form {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  .form-group input,
+  .form-select {
+    font-size: 16px; /* evita zoom no iOS */
+  }
+
+  .btn-large {
+    padding: 0.875rem 1.5rem;
   }
 }

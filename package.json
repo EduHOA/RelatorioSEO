@@ -12,8 +12,9 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "electron:dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .\"",
     "electron:clean": "node -e \"var fs=require('fs'); try { fs.rmSync('release',{recursive:true,force:true}); } catch(e) { console.error('\\nFeche o LiveSEO Relatórios e tente novamente: npm run electron:build\\n'); process.exit(1); }\"",
-    "electron:build": "npm run build && npm run electron:clean && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder",
-    "electron:build:new": "npm run build && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --config electron-builder.release-new.json"
+    "prepare-installer": "node build/generate-sidebar.cjs && node build/generate-header.cjs",
+    "electron:build": "npm run prepare-installer && npm run build && npm run electron:clean && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder",
+    "electron:build:new": "npm run prepare-installer && npm run build && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --config electron-builder.release-new.json"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -46,7 +47,7 @@
   },
   "build": {
     "appId": "com.liveseo.relatorios",
-    "productName": "LiveSEO Relatórios",
+    "productName": "Relatórios LiveSEO",
     "directories": {
       "output": "release"
     },
@@ -54,15 +55,23 @@
       "dist/**/*",
       "electron/**/*"
     ],
+    "icon": "build/icon.png",
     "win": {
       "target": "nsis",
-      "signAndEditExecutable": false
+      "signAndEditExecutable": false,
+      "icon": "build/icon.png"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "createStartMenuShortcut": true
+      "createStartMenuShortcut": true,
+      "include": "build/installer.nsh",
+      "installerSidebar": "build/installerSidebar.bmp",
+      "uninstallerSidebar": "build/installerSidebar.bmp",
+      "installerHeader": "build/installerHeader.bmp",
+      "shortcutName": "Relatórios LiveSEO",
+      "language": "1046"
     }
   }
 }

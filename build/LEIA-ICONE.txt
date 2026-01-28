@@ -1,0 +1,20 @@
+ÍCONE DO EXECUTÁVEL (Relatórios LiveSEO)
+========================================
+
+O electron-builder está configurado para usar:
+  build/icon.png
+
+Para o .exe e o instalador exibirem o logo LiveSEO:
+
+1. Baixe o logo em:
+   https://www.linx.com.br/app/uploads/2022/07/liveSEO-logo-aplicacao-principal-1-1.png
+
+2. Salve o arquivo nesta pasta como: icon.png
+
+   Ou pela linha de comando (PowerShell, nesta pasta do projeto):
+   Invoke-WebRequest -Uri "https://www.linx.com.br/app/uploads/2022/07/liveSEO-logo-aplicacao-principal-1-1.png" -OutFile "icon.png" -UseBasicParsing
+
+3. Rode o build:
+   npm run electron:build
+
+Recomendado: ícone em PNG, 256x256 ou 512x512 pixels, para melhor resultado no Windows.

@@ -223,6 +223,16 @@ function EditorPage({ setLoading }: { setLoading: (v: boolean) => void }) {
 }
 
 function AppRoutes({ setLoading }: { setLoading: (v: boolean) => void }) {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === ROUTES.HOME) {
+      document.body.classList.add('page-home');
+      return () => document.body.classList.remove('page-home');
+    }
+    document.body.classList.remove('page-home');
+  }, [location.pathname]);
+
   return (
     <Routes>
       <Route path={ROUTES.HOME} element={<HomePage setLoading={setLoading} />} />

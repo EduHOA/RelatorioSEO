@@ -120,7 +120,7 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ initialConfig, onSav
     <div className="report-editor">
       <header className="editor-header">
         <div className="editor-header-left">
-          <span className="editor-brand">LiveSEO</span>
+          <span className="editor-brand">Relatórios LiveSEO</span>
           <span className="editor-title">{config.clientName} · {config.period}</span>
         </div>
         <div className="editor-tabs">
