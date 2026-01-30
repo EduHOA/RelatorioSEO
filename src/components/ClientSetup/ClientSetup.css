@@ -222,10 +222,6 @@
   border-color: var(--negativo);
 }
 
-.form-group-comparison {
-  max-width: 320px;
-}
-
 .form-select {
   display: block;
   width: 100%;

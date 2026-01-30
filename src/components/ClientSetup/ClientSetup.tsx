@@ -18,7 +18,6 @@ export const ClientSetup: React.FC<ClientSetupProps> = ({ onComplete, onBack }) 
     periodStart: Date | null;
     periodEnd: Date | null;
     period: string;
-    comparisonPeriod: 'Período anterior' | 'Ano anterior';
     logo: string;
   }>({
     clientName: '',
@@ -26,7 +25,6 @@ export const ClientSetup: React.FC<ClientSetupProps> = ({ onComplete, onBack }) 
     periodStart: null,
     periodEnd: null,
     period: '',
-    comparisonPeriod: 'Ano anterior',
     logo: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -83,7 +81,6 @@ export const ClientSetup: React.FC<ClientSetupProps> = ({ onComplete, onBack }) 
       headerSection.data.clientName = formData.clientName;
       headerSection.data.domain = formData.domain;
       headerSection.data.periodInfo = formData.period;
-      headerSection.data.comparisonPeriod = formData.comparisonPeriod;
       headerSection.data.logo = formData.logo || config.logo || '';
     }
 
@@ -184,24 +181,6 @@ export const ClientSetup: React.FC<ClientSetupProps> = ({ onComplete, onBack }) 
               {errors.period && (
                 <span className="error-message">{errors.period}</span>
               )}
-            </div>
-
-            <div className="form-group form-group-comparison">
-              <label htmlFor="comparisonPeriod">
-                Período de Comparação
-              </label>
-              <select
-                id="comparisonPeriod"
-                value={formData.comparisonPeriod}
-                onChange={(e) => handleInputChange('comparisonPeriod', e.target.value)}
-                className="form-select"
-              >
-                <option value="Período anterior">Período anterior</option>
-                <option value="Ano anterior">Ano anterior</option>
-              </select>
-              <small className="form-hint">
-                Define a base de comparação dos dados no relatório
-              </small>
             </div>
 
             <div className="form-group">
