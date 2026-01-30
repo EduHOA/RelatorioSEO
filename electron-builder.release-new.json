@@ -1,6 +1,6 @@
 {
   "appId": "com.liveseo.relatorios",
-  "productName": "Relatórios LiveSEO",
+  "productName": "Relatórios liveSEO",
   "directories": {
     "output": "release-new"
   },
@@ -20,7 +20,7 @@
     "installerSidebar": "build/installerSidebar.bmp",
     "uninstallerSidebar": "build/installerSidebar.bmp",
     "installerHeader": "build/installerHeader.bmp",
-    "shortcutName": "Relatórios LiveSEO",
+    "shortcutName": "Relatórios liveSEO",
     "language": "1046"
   }
 }

@@ -1,5 +1,5 @@
 /**
- * Processo principal do Electron – LiveSEO Relatórios
+ * Processo principal do Electron – liveSEO Relatórios
  * Abre a janela da aplicação e carrega o app (dev server ou build estático).
  */
 const { app, BrowserWindow, Menu } = require('electron');
@@ -17,7 +17,7 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
     },
-    title: 'Relatórios LiveSEO',
+    title: 'Relatórios liveSEO',
   });
 
   if (isDev) {

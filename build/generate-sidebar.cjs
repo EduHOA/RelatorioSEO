@@ -1,5 +1,5 @@
 /**
- * Gera build/installerSidebar.bmp (164x314) no estilo Relatórios LiveSEO.
+ * Gera build/installerSidebar.bmp (164x314) no estilo Relatórios liveSEO.
  * Cores: #ff9a05 (laranja) e #f4f6f9 (fundo claro).
  * Executar: node build/generate-sidebar.cjs
  */

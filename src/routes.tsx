@@ -1,5 +1,5 @@
 /**
- * Rotas da aplicação LiveSEO Relatórios
+ * Rotas da aplicação liveSEO Relatórios
  *
  * /         – Início: criar novo, carregar salvo
  * /novo     – Assistente de novo relatório (ClientSetup)

@@ -271,7 +271,7 @@ export const createDefaultReport = (clientName: string, period: string): ReportC
     metadata: {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      createdBy: 'Equipe LiveSEO',
+      createdBy: 'Equipe liveSEO',
     },
   };
 };

@@ -216,7 +216,7 @@ export const ClientSetup: React.FC<ClientSetupProps> = ({ onComplete, onBack }) 
                 placeholder="https://exemplo.com/logo.png"
               />
               <small className="form-hint">
-                Se não preenchido, será usado o logo padrão da LiveSEO
+                Se não preenchido, será usado o logo padrão da liveSEO
               </small>
             </div>
           </div>

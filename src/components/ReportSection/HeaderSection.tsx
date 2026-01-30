@@ -33,7 +33,7 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ section, config })
         </p>
       </div>
       {logo ? (
-        <img src={logo} alt="LiveSEO" className="header-logo" />
+        <img src={logo} alt="liveSEO" className="header-logo" />
       ) : null}
     </header>
   );

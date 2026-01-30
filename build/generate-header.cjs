@@ -1,5 +1,5 @@
 /**
- * Gera build/installerHeader.bmp (150x57) no estilo Relatórios LiveSEO.
+ * Gera build/installerHeader.bmp (150x57) no estilo Relatórios liveSEO.
  * Cores: #ff9a05 (laranja) e #f4f6f9 (fundo claro). Gradiente horizontal.
  * Executar: node build/generate-header.cjs
  */

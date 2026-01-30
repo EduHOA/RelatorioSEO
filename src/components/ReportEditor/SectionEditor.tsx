@@ -89,7 +89,7 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
                 onChange={(e) => updateData('logo', e.target.value)}
                 placeholder="https://exemplo.com/logo.png"
               />
-              <small className="form-hint">Deixe em branco para usar o logo padrão da LiveSEO.</small>
+              <small className="form-hint">Deixe em branco para usar o logo padrão da liveSEO.</small>
             </label>
           </div>
         );
@@ -265,7 +265,7 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
                 type="text"
                 value={localData.text || ''}
                 onChange={(e) => updateData('text', e.target.value)}
-                placeholder="Relatório gerado pela LiveSEO"
+                placeholder="Relatório gerado pela liveSEO"
               />
             </label>
           </div>

@@ -27,7 +27,7 @@ export const FooterSection: React.FC<FooterSectionProps> = ({ section, config })
     >
       <div className="footer-content">
         <p className="footer-text">
-          {section.data.text || 'Relatório gerado pela LiveSEO'}
+          {section.data.text || 'Relatório gerado pela liveSEO'}
         </p>
         <p className="footer-meta">
           Criado por {config.metadata.createdBy} em {new Date(config.metadata.createdAt).toLocaleDateString('pt-BR')}

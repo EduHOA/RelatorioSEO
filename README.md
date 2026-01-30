@@ -1,6 +1,6 @@
-# Sistema de Relatórios LiveSEO
+# Sistema de Relatórios liveSEO
 
-Sistema dinâmico para criação e personalização de relatórios de análise de resultados para clientes da LiveSEO.
+Sistema dinâmico para criação e personalização de relatórios de análise de resultados para clientes da liveSEO.
 
 ## 🚀 Características
 
@@ -160,4 +160,4 @@ src/
 
 ## 📝 Licença
 
-Este projeto é de uso interno da LiveSEO.
+Este projeto é de uso interno da liveSEO.
