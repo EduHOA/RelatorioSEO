@@ -1,17 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ReportConfig, ReportSection } from '../../types/report';
 import { ReportRenderer } from '../ReportRenderer';
 import { SectionList } from './SectionList';
 import { SectionEditor } from './SectionEditor';
+import type { ReportLocale } from '../../utils/reportStrings';
 import './ReportEditor.css';
 
 interface ReportEditorProps {
   initialConfig: ReportConfig;
   onSave: (config: ReportConfig) => void;
+  /** Ref para o pai ler o config atual (ex.: export PDF com idioma). */
+  configRef?: React.MutableRefObject<ReportConfig | null>;
+  /** Config para exibir no preview (ex.: traduzido para export PDF). Quando setado, o preview usa este config. */
+  exportDisplayConfig?: ReportConfig | null;
+  /** Idioma do relatório quando em export (ex.: en/es). Usado para strings fixas da UI. */
+  exportLocale?: ReportLocale | null;
 }
 
-export const ReportEditor: React.FC<ReportEditorProps> = ({ initialConfig, onSave }) => {
+export const ReportEditor: React.FC<ReportEditorProps> = ({
+  initialConfig,
+  onSave,
+  configRef,
+  exportDisplayConfig,
+  exportLocale,
+}) => {
   const [config, setConfig] = useState<ReportConfig>(initialConfig);
+
+  useEffect(() => {
+    if (configRef) configRef.current = config;
+  }, [config, configRef]);
+
+  useEffect(() => {
+    if (exportDisplayConfig) setPreviewMode(true);
+  }, [exportDisplayConfig]);
+
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState(true);
 
@@ -158,7 +180,11 @@ export const ReportEditor: React.FC<ReportEditorProps> = ({ initialConfig, onSav
         {previewMode ? (
           <div className="preview-wrapper">
             <div className="preview-paper">
-              <ReportRenderer config={config} />
+              <ReportRenderer
+                config={exportDisplayConfig ?? config}
+                containerId="report-export"
+                locale={exportLocale ?? undefined}
+              />
             </div>
           </div>
         ) : (

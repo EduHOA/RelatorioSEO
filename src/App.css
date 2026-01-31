@@ -33,6 +33,25 @@
   }
 }
 
+.pdf-lang-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pdf-lang-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--texto-principal, #333);
+}
+
+.pdf-lang-option input[type="radio"] {
+  accent-color: var(--destaque, #ff9a05);
+}
+
 .app {
   height: 100vh;
   height: 100dvh;

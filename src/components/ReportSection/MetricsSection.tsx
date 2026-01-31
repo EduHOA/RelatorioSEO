@@ -1,6 +1,13 @@
 import React from 'react';
 import { ReportSection, MetricData } from '../../types/report';
+import { reportStrings, type ReportLocale } from '../../utils/reportStrings';
 import './SectionStyles.css';
+
+const COMPARISON_LABELS_PT: Record<string, string> = {
+  periodo_anterior: 'Comparação: período anterior',
+  ano_anterior: 'Comparação: ano anterior',
+  ambos: 'Comparação: período e ano anteriores',
+};
 
 interface MetricsSectionProps {
   section: ReportSection;
@@ -8,18 +15,16 @@ interface MetricsSectionProps {
     primary: string;
     accent: string;
   };
+  locale?: ReportLocale;
 }
 
-const COMPARISON_LABELS: Record<string, string> = {
-  periodo_anterior: 'Comparação: período anterior',
-  ano_anterior: 'Comparação: ano anterior',
-  ambos: 'Comparação: período e ano anteriores',
-};
-
-export const MetricsSection: React.FC<MetricsSectionProps> = ({ section, colors }) => {
+export const MetricsSection: React.FC<MetricsSectionProps> = ({ section, colors, locale }) => {
   const metrics: MetricData[] = section.data.metrics || [];
   const comparisonPeriod = (section.data.comparisonPeriod as string) || 'periodo_anterior';
-  const comparisonLabel = COMPARISON_LABELS[comparisonPeriod] || COMPARISON_LABELS.periodo_anterior;
+  const s = locale ? reportStrings[locale] : null;
+  const comparisonLabel = s
+    ? (comparisonPeriod === 'periodo_anterior' ? s.comparisonPreviousPeriod : comparisonPeriod === 'ano_anterior' ? s.comparisonPreviousYear : s.comparisonPeriodAndYear)
+    : (COMPARISON_LABELS_PT[comparisonPeriod] || COMPARISON_LABELS_PT.periodo_anterior);
 
   const formatChange = (change?: number, type?: string) => {
     if (change === undefined) return null;
@@ -47,18 +52,18 @@ export const MetricsSection: React.FC<MetricsSectionProps> = ({ section, colors 
               <div className="metric-changes metric-changes-dual">
                 <div className="metric-change-line">
                   {formatChange(metric.change, metric.changeType)}
-                  <span className="metric-change-context">vs. período anterior</span>
+                  <span className="metric-change-context">{s ? s.vsPreviousPeriod : 'vs. período anterior'}</span>
                 </div>
                 <div className="metric-change-line">
                   {formatChange(metric.changeAnoAnterior, metric.changeTypeAnoAnterior)}
-                  <span className="metric-change-context">vs. ano anterior</span>
+                  <span className="metric-change-context">{s ? s.vsPreviousYear : 'vs. ano anterior'}</span>
                 </div>
               </div>
             ) : (
               <div className="metric-change-line metric-change-line-single">
                 {formatChange(metric.change, metric.changeType)}
                 <span className="metric-change-context">
-                  {comparisonPeriod === 'ano_anterior' ? 'vs. ano anterior' : 'vs. período anterior'}
+                  {s ? (comparisonPeriod === 'ano_anterior' ? s.vsPreviousYear : s.vsPreviousPeriod) : (comparisonPeriod === 'ano_anterior' ? 'vs. ano anterior' : 'vs. período anterior')}
                 </span>
               </div>
             )}

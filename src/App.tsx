@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   HashRouter,
   Routes,
@@ -13,6 +13,7 @@ import { ReportEditor } from './components/ReportEditor/ReportEditor';
 import { ReportConfig } from './types/report';
 import { exportToPDF, exportToHTML } from './utils/exportUtils';
 import { getReportHistory, saveReportToHistory } from './utils/reportHistory';
+import { translateReportConfig, type TranslateTargetLang } from './utils/translationApi';
 import { Modal } from './components/Modal/Modal';
 import { ROUTES } from './routes';
 import './App.css';
@@ -64,6 +65,8 @@ function ClientSetupPage({ setLoading }: { setLoading: (v: boolean) => void }) {
   );
 }
 
+type PdfExportLanguage = 'pt' | 'en' | 'es';
+
 function EditorPage({ setLoading }: { setLoading: (v: boolean) => void }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -76,6 +79,15 @@ function EditorPage({ setLoading }: { setLoading: (v: boolean) => void }) {
   const [savedModalOpen, setSavedModalOpen] = useState(false);
   const [pdfSavedFilename, setPdfSavedFilename] = useState<string | null>(null);
   const [htmlSavedFilename, setHtmlSavedFilename] = useState<string | null>(null);
+  const [pdfModalOpen, setPdfModalOpen] = useState(false);
+  const [pdfExportLanguage, setPdfExportLanguage] = useState<PdfExportLanguage>('pt');
+  const [pdfExporting, setPdfExporting] = useState(false);
+  const [pdfExportState, setPdfExportState] = useState<{
+    config: ReportConfig;
+    filename: string;
+    lang: PdfExportLanguage;
+  } | null>(null);
+  const configRef = useRef<ReportConfig | null>(null);
 
   useEffect(() => {
     setLoading(false);
@@ -87,22 +99,64 @@ function EditorPage({ setLoading }: { setLoading: (v: boolean) => void }) {
     setSavedModalOpen(true);
   };
 
-  const handleExportPDF = async () => {
-    if (!config) return;
-    const filename = `relatorio-${config.clientName}-${Date.now()}.pdf`;
-    try {
-      const reportContainer = document.getElementById('report-export');
-      if (reportContainer) {
-        await exportToPDF('report-export', filename);
-        setPdfSavedFilename(filename);
-      } else {
-        alert('Nenhum relatório encontrado para exportar. Certifique-se de estar no modo de visualização.');
+  const openPdfModal = () => {
+    setPdfExportLanguage('pt');
+    setPdfModalOpen(true);
+  };
+
+  const handleExportPDFWithLanguage = async (lang: PdfExportLanguage) => {
+    setPdfModalOpen(false);
+    const currentConfig = configRef.current || config;
+    if (!currentConfig) return;
+
+    const baseName = `relatorio-${currentConfig.clientName}-${Date.now()}`;
+    const filename = lang === 'pt' ? `${baseName}.pdf` : `${baseName}-${lang}.pdf`;
+
+    if (lang === 'pt') {
+      try {
+        const reportContainer = document.getElementById('report-export');
+        if (reportContainer) {
+          await exportToPDF('report-export', filename);
+          setPdfSavedFilename(filename);
+        } else {
+          alert('Nenhum relatório encontrado para exportar. Certifique-se de estar no modo de visualização.');
+        }
+      } catch (error) {
+        alert('Erro ao exportar PDF. Verifique o console para mais detalhes.');
+        console.error(error);
       }
+      return;
+    }
+
+    setPdfExporting(true);
+    try {
+      const translatedConfig = await translateReportConfig(currentConfig, lang as TranslateTargetLang);
+      setPdfExportState({ config: translatedConfig, filename, lang });
     } catch (error) {
-      alert('Erro ao exportar PDF. Verifique o console para mais detalhes.');
+      setPdfExporting(false);
+      alert('Erro ao traduzir o relatório. Verifique a conexão ou a configuração da API de tradução.');
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    if (!pdfExportState) return;
+    const timer = setTimeout(async () => {
+      try {
+        // Esconder overlay antes da captura para o conteúdo estar visível e pintado
+        setPdfExporting(false);
+        await new Promise((r) => setTimeout(r, 300));
+        await exportToPDF('report-export', pdfExportState.filename);
+        setPdfSavedFilename(pdfExportState.filename);
+      } catch (error) {
+        alert('Erro ao exportar PDF.');
+        console.error(error);
+      }
+      setPdfExportState(null);
+      setPdfExporting(false);
+    }, 1800);
+    return () => clearTimeout(timer);
+  }, [pdfExportState]);
 
   const handleExportHTML = () => {
     if (!config) return;
@@ -151,12 +205,24 @@ function EditorPage({ setLoading }: { setLoading: (v: boolean) => void }) {
 
   return (
     <div className="app">
-      <ReportEditor initialConfig={config} onSave={handleSave} />
+      {pdfExporting && (
+        <div className="app-loading-overlay" role="status" aria-live="polite">
+          <div className="app-loading-spinner" />
+          <p className="app-loading-text">Traduzindo e gerando PDF...</p>
+        </div>
+      )}
+      <ReportEditor
+        initialConfig={config}
+        onSave={handleSave}
+        configRef={configRef}
+        exportDisplayConfig={pdfExportState?.config ?? null}
+        exportLocale={pdfExportState?.lang ?? null}
+      />
       <div className="export-buttons">
         <button type="button" className="btn btn-secondary" onClick={handleBackToHome}>
           ← Voltar ao Início
         </button>
-        <button type="button" className="btn btn-primary" onClick={handleExportPDF}>
+        <button type="button" className="btn btn-primary" onClick={openPdfModal}>
           Exportar PDF
         </button>
         <button type="button" className="btn btn-primary" onClick={handleExportHTML}>
@@ -171,6 +237,51 @@ function EditorPage({ setLoading }: { setLoading: (v: boolean) => void }) {
         message="As alterações foram salvas com sucesso. O relatório foi atualizado no histórico."
         variant="success"
         confirmLabel="OK"
+      />
+
+      <Modal
+        open={pdfModalOpen}
+        onClose={() => setPdfModalOpen(false)}
+        title="Gerar PDF"
+        message={
+          <div className="pdf-lang-options">
+            <p style={{ marginBottom: '0.75rem' }}>Escolha o idioma do relatório:</p>
+            <label className="pdf-lang-option">
+              <input
+                type="radio"
+                name="pdf-lang"
+                value="pt"
+                checked={pdfExportLanguage === 'pt'}
+                onChange={() => setPdfExportLanguage('pt')}
+              />
+              <span>Português (padrão do relatório)</span>
+            </label>
+            <label className="pdf-lang-option">
+              <input
+                type="radio"
+                name="pdf-lang"
+                value="en"
+                checked={pdfExportLanguage === 'en'}
+                onChange={() => setPdfExportLanguage('en')}
+              />
+              <span>Inglês</span>
+            </label>
+            <label className="pdf-lang-option">
+              <input
+                type="radio"
+                name="pdf-lang"
+                value="es"
+                checked={pdfExportLanguage === 'es'}
+                onChange={() => setPdfExportLanguage('es')}
+              />
+              <span>Espanhol</span>
+            </label>
+          </div>
+        }
+        variant="info"
+        confirmLabel="Gerar PDF"
+        cancelLabel="Cancelar"
+        onConfirm={() => handleExportPDFWithLanguage(pdfExportLanguage)}
       />
 
       <Modal

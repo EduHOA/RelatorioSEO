@@ -10,6 +10,8 @@
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
 }
 
 .report-content {
@@ -17,6 +19,13 @@
   margin: 0 auto;
   padding: 0;
   box-sizing: border-box;
+  min-width: 0;
+}
+
+/* Manter layout estável em qualquer idioma (tradução) */
+.report-container--translated .report-content,
+.report-container--translated .report-section {
+  min-width: 0;
 }
 
 /* Dentro do preview-paper (editor) mantém o mesmo padrão de conteúdo */
@@ -40,6 +49,40 @@
 /* Transição suave ao rolar */
 .report-container {
   scroll-behavior: smooth;
+}
+
+/* Export 1 folha: compactar levemente para caber sem distorcer a fonte */
+.report-container.report-pdf-single-page {
+  font-size: 92%;
+  line-height: 1.5;
+}
+
+.report-container.report-pdf-single-page .section-title {
+  font-size: 1.35rem;
+  margin-bottom: 14px;
+}
+
+.report-container.report-pdf-single-page .report-section {
+  margin-bottom: 24px;
+}
+
+.report-container.report-pdf-single-page .report-header {
+  padding: 14px 28px;
+  margin-bottom: 20px;
+}
+
+.report-container.report-pdf-single-page .header-info h1 {
+  font-size: 1.5rem;
+}
+
+.report-container.report-pdf-single-page .kpi-card,
+.report-container.report-pdf-single-page .metric-card {
+  padding: 14px;
+}
+
+.report-container.report-pdf-single-page .kpi-value,
+.report-container.report-pdf-single-page .metric-value {
+  font-size: 1.5rem;
 }
 
 @media print {

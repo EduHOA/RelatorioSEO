@@ -1,12 +1,24 @@
 import React from 'react';
 import { ReportSection, ActionItem } from '../../types/report';
+import { reportStrings, type ReportLocale } from '../../utils/reportStrings';
 import './SectionStyles.css';
 
 interface ActionsSectionProps {
   section: ReportSection;
+  locale?: ReportLocale;
 }
 
-export const ActionsSection: React.FC<ActionsSectionProps> = ({ section }) => {
+function getStatusLabel(status: string, locale?: ReportLocale): string {
+  const s = locale ? reportStrings[locale] : null;
+  if (status === 'andamento') return s ? s.actionInProgress : 'Em andamento';
+  if (status === 'iniciar') return s ? s.actionToStart : 'A iniciar';
+  if (status === 'docs') return s ? s.actionInDocs : 'Em documentação';
+  if (status === 'finalizadas') return s ? s.actionCompleted : 'Finalizadas';
+  if (status === 'backlog_priorizado') return s ? s.actionBacklogPrioritized : 'Backlog priorizado';
+  return status || '—';
+}
+
+export const ActionsSection: React.FC<ActionsSectionProps> = ({ section, locale }) => {
   const actions: ActionItem[] = section.data.actions || [];
 
   return (
@@ -26,12 +38,7 @@ export const ActionsSection: React.FC<ActionsSectionProps> = ({ section }) => {
                 )}
               </span>
               <span className={`status-tag ${action.status}`}>
-                {action.status === 'andamento' ? 'Em andamento' :
-                 action.status === 'iniciar' ? 'A iniciar' :
-                 action.status === 'docs' ? 'Em documentação' :
-                 action.status === 'finalizadas' ? 'Finalizadas' :
-                 action.status === 'backlog_priorizado' ? 'Backlog priorizado' :
-                 action.status || '—'}
+                {getStatusLabel(action.status ?? '', locale)}
               </span>
             </li>
           ))}

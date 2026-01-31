@@ -1,15 +1,21 @@
 import React from 'react';
 import { ReportSection, MetaSEOData } from '../../types/report';
+import { reportStrings, type ReportLocale } from '../../utils/reportStrings';
 import './SectionStyles.css';
 
 interface MetaSEOSectionProps {
   section: ReportSection;
+  locale?: ReportLocale;
 }
 
-export const MetaSEOSection: React.FC<MetaSEOSectionProps> = ({ section }) => {
+export const MetaSEOSection: React.FC<MetaSEOSectionProps> = ({ section, locale }) => {
   const metaData: MetaSEOData = section.data.metaSEO || {
     metas: []
   };
+  const s = locale ? reportStrings[locale] : null;
+  const metaConservative = s ? s.metaConservative : 'Meta conservadora:';
+  const metaGrowthRepresenting = s ? s.metaGrowthRepresenting : 'representando um crescimento de';
+  const metaPercentReached = s ? s.metaPercentReached : '% da meta atingida';
 
   return (
     <section className="report-section">
@@ -20,12 +26,12 @@ export const MetaSEOSection: React.FC<MetaSEOSectionProps> = ({ section }) => {
           <div key={index} className="meta-bar-wrapper">
             {meta.target && (
               <p>
-                <strong>Meta conservadora:</strong> {meta.target}, representando um crescimento de <strong>{meta.growth}</strong>.
+                <strong>{metaConservative}</strong> {meta.target}, {metaGrowthRepresenting} <strong>{meta.growth}</strong>.
               </p>
             )}
             <div className="meta-label">
               <span>{meta.label}</span>
-              <span>{meta.percentage}% da meta atingida</span>
+              <span>{meta.percentage}{metaPercentReached}</span>
             </div>
             <div className="progress-bg">
               <div 

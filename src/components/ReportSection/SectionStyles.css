@@ -3,6 +3,23 @@
 /* Garantir que todas as seções tenham o mesmo padrão visual */
 .report-section {
   margin-bottom: 40px;
+  min-width: 0;
+  width: 100%;
+}
+
+/* Footer (evitar quebra de layout com textos traduzidos) */
+.report-footer {
+  min-width: 0;
+}
+
+.report-footer .footer-content {
+  min-width: 0;
+}
+
+.report-footer .footer-text,
+.report-footer .footer-meta {
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* Garantir espaçamento consistente entre seções */
@@ -18,6 +35,9 @@
   padding-left: 15px;
   text-transform: none;
   font-weight: 600;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .section-title::first-letter {
@@ -28,16 +48,24 @@
 .report-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
   background: var(--bg-card);
   padding: 20px 40px;
   border-radius: 15px;
   margin-bottom: 30px;
   box-shadow: var(--shadow);
+  min-width: 0;
 }
 
 .header-content {
   flex: 1;
+}
+
+.header-info {
+  min-width: 0;
+  flex: 1 1 200px;
 }
 
 .header-info h1 {
@@ -45,12 +73,16 @@
   color: var(--texto-principal);
   margin-bottom: 5px;
   font-weight: 600;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .header-info p {
   color: var(--texto-secundario);
   font-size: 0.9rem;
   margin: 5px 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .header-logos {
@@ -126,9 +158,18 @@
 .meta-label {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 8px;
   font-weight: 600;
   font-size: 0.95rem;
+  min-width: 0;
+}
+
+.meta-label span:first-child {
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .progress-bg {
@@ -171,6 +212,7 @@
   gap: 20px;
   justify-content: center;
   margin-bottom: 20px;
+  min-width: 0;
 }
 
 .kpi-card {
@@ -180,8 +222,10 @@
   box-shadow: var(--shadow);
   flex: 1 1 calc(25% - 20px);
   min-width: 200px;
+  max-width: 100%;
   text-align: center;
   transition: transform 0.3s ease;
+  box-sizing: border-box;
 }
 
 .kpi-card:hover {
@@ -194,6 +238,9 @@
   font-weight: 600;
   margin-bottom: 10px;
   text-transform: uppercase;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.3;
 }
 
 .kpi-value {
@@ -301,10 +348,14 @@
   padding: 12px 0;
   font-size: 0.9rem;
   border-bottom: 1px solid #f1f1f1;
+  min-width: 0;
 }
 
 .item-list-acao li span:first-child {
   flex: 1;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .status-tag {
@@ -1087,12 +1138,16 @@
   color: var(--texto-secundario);
   margin: -8px 0 16px 0;
   font-weight: 500;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .metrics-section .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 20px;
+  min-width: 0;
 }
 
 .metric-card {
@@ -1102,6 +1157,8 @@
   box-shadow: var(--shadow);
   border-top: 4px solid var(--destaque);
   text-align: center;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .metric-label {
@@ -1109,6 +1166,9 @@
   color: var(--texto-secundario);
   font-weight: 600;
   margin-bottom: 10px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.3;
 }
 
 .metric-value {
@@ -1203,6 +1263,7 @@
 
 .bar-group {
   margin-bottom: 30px;
+  min-width: 0;
 }
 
 .bar-label {
@@ -1210,6 +1271,9 @@
   margin-bottom: 15px;
   font-weight: 600;
   color: var(--texto-principal);
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .bar-wrapper {

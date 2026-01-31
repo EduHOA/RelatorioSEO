@@ -1,41 +1,73 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
+/** Aguarda o browser terminar layout e paint (2 frames). */
+function afterLayout(): Promise<void> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => resolve());
+    });
+  });
+}
+
 export const exportToPDF = async (elementId: string, filename: string = 'relatorio.pdf') => {
   const element = document.getElementById(elementId);
   if (!element) {
     throw new Error('Elemento não encontrado');
   }
 
+  // Garantir que o elemento está visível e layout concluído (evita PDF em branco)
+  element.scrollIntoView({ behavior: 'instant', block: 'start' });
+  await afterLayout();
+
+  const singlePageClass = 'report-pdf-single-page';
   try {
+    // Compactar levemente o texto para caber em 1 folha sem distorcer a fonte
+    element.classList.add(singlePageClass);
+    await afterLayout();
+
+    // Escala 1.5: captura para 1 folha com fonte legível (não reduzir demais)
+    const captureScale = 1.5;
     const canvas = await html2canvas(element, {
-      scale: 2,
+      scale: captureScale,
       useCORS: true,
       logging: false,
+      allowTaint: true,
+      width: element.scrollWidth,
+      height: element.scrollHeight,
     });
 
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'mm', 'a4');
-    const imgWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
-    let position = 0;
+    const pageW = 210;
+    const pageH = 297;
 
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
+    // Proporção do conteúdo (mesma do canvas)
+    const contentAspect = canvas.width / canvas.height;
+    const pageAspect = pageW / pageH;
 
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+    // Caber em 1 página: escala uniforme, sem distorcer a fonte
+    let drawW: number;
+    let drawH: number;
+    if (contentAspect >= pageAspect) {
+      drawW = pageW;
+      drawH = pageW / contentAspect;
+    } else {
+      drawH = pageH;
+      drawW = pageH * contentAspect;
     }
 
+    // Centralizar na folha
+    const x = (pageW - drawW) / 2;
+    const y = (pageH - drawH) / 2;
+
+    pdf.addImage(imgData, 'PNG', x, y, drawW, drawH);
     pdf.save(filename);
   } catch (error) {
     console.error('Erro ao exportar PDF:', error);
     throw error;
+  } finally {
+    element.classList.remove(singlePageClass);
   }
 };
 
