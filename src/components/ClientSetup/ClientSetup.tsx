@@ -19,6 +19,7 @@ export const ClientSetup: React.FC<ClientSetupProps> = ({ onComplete, onBack }) 
     periodEnd: Date | null;
     period: string;
     logo: string;
+    hasBlog: boolean;
   }>({
     clientName: '',
     domain: '',
@@ -26,10 +27,11 @@ export const ClientSetup: React.FC<ClientSetupProps> = ({ onComplete, onBack }) 
     periodEnd: null,
     period: '',
     logo: '',
+    hasBlog: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleInputChange = (field: string, value: string | Date | null) => {
+  const handleInputChange = (field: string, value: string | Date | null | boolean) => {
     setFormData(prev => {
       const updated = { ...prev, [field]: value };
 
@@ -70,11 +72,12 @@ export const ClientSetup: React.FC<ClientSetupProps> = ({ onComplete, onBack }) 
   const handleCreateReport = () => {
     if (!validate()) return;
 
-    const config = createDefaultReport(formData.clientName, formData.period);
+    const config = createDefaultReport(formData.clientName, formData.period, formData.hasBlog);
 
     config.clientName = formData.clientName;
     config.period = formData.period;
     config.logo = formData.logo || config.logo;
+    config.hasBlog = formData.hasBlog;
 
     const headerSection = config.sections.find(s => s.type === 'header');
     if (headerSection) {
@@ -195,7 +198,21 @@ export const ClientSetup: React.FC<ClientSetupProps> = ({ onComplete, onBack }) 
                 placeholder="https://exemplo.com/logo.png"
               />
               <small className="form-hint">
-                Se não preenchido, será usado o logo padrão da liveSEO
+                Opcional. Se não preenchido, a logo do cliente não será exibida no header.
+              </small>
+            </div>
+
+            <div className="form-group form-group-checkbox">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={formData.hasBlog}
+                  onChange={(e) => handleInputChange('hasBlog', e.target.checked)}
+                />
+                <span>Cliente tem blog</span>
+              </label>
+              <small className="form-hint">
+                Se ativado, o relatório incluirá o bloco de seções do blog (Grid de KPIs, Palavras-chave e URL, Análise).
               </small>
             </div>
           </div>

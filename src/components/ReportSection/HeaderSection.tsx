@@ -2,6 +2,8 @@ import React from 'react';
 import { ReportSection } from '../../types/report';
 import './SectionStyles.css';
 
+const LIVE_LOGO_URL = 'https://www.linx.com.br/app/uploads/2022/07/liveSEO-logo-aplicacao-principal-1-1.png';
+
 interface HeaderSectionProps {
   section: ReportSection;
   config: {
@@ -20,7 +22,7 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ section, config })
   const domain = section.data.domain ?? '';
   const periodInfo = section.data.periodInfo ?? config.period;
   const comparisonPeriod = section.data.comparisonPeriod ?? '';
-  const logo = (section.data.logo && String(section.data.logo).trim()) || config.logo || '';
+  const clientLogoUrl = (section.data.logo && String(section.data.logo).trim()) || config.logo || '';
 
   return (
     <header className="report-header">
@@ -32,9 +34,12 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ section, config })
           {comparisonPeriod ? <> | <b>Período de comparação:</b> {comparisonPeriod}</> : null}
         </p>
       </div>
-      {logo ? (
-        <img src={logo} alt="liveSEO" className="header-logo" />
-      ) : null}
+      <div className="header-logos">
+        <img src={LIVE_LOGO_URL} alt="liveSEO" className="header-logo header-logo-live" />
+        {clientLogoUrl ? (
+          <img src={clientLogoUrl} alt={clientName} className="header-logo header-logo-client" />
+        ) : null}
+      </div>
     </header>
   );
 };

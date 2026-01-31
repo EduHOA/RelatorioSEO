@@ -40,6 +40,12 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
     onUpdate({ data: newData });
   };
 
+  const updateDataMultiple = (updates: Record<string, any>) => {
+    const newData = { ...localData, ...updates };
+    setLocalData(newData);
+    onUpdate({ data: newData });
+  };
+
   const renderEditor = () => {
     switch (section.type) {
       case 'header':
@@ -354,7 +360,17 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
           </div>
         );
 
-      case 'competitorAnalysis':
+      case 'competitorAnalysis': {
+        const barGroups = localData.barGroups || [];
+        const derivedNames = (() => {
+          for (const g of barGroups) {
+            if (g.competitors?.length) {
+              return g.competitors.map((c: any) => c.name || '').filter(Boolean);
+            }
+          }
+          return [];
+        })();
+        const competitorNames = (localData.competitorNames as string[] | undefined) ?? derivedNames;
         return (
           <div className="editor-form">
             <label>
@@ -367,11 +383,18 @@ export const SectionEditor: React.FC<SectionEditorProps> = ({ section, onUpdate 
               />
             </label>
             <CompetitorAnalysisEditor
-              barGroups={localData.barGroups || []}
-              onChange={(barGroups) => updateData('barGroups', barGroups)}
+              barGroups={barGroups}
+              competitorNames={competitorNames}
+              onChange={(updates) => {
+                const next: Record<string, any> = {};
+                if (updates.competitorNames !== undefined) next.competitorNames = updates.competitorNames;
+                if (updates.barGroups !== undefined) next.barGroups = updates.barGroups;
+                if (Object.keys(next).length > 0) updateDataMultiple(next);
+              }}
             />
           </div>
         );
+      }
 
       case 'statusCards':
         return (
@@ -1190,55 +1213,112 @@ const GainsLossesEditor: React.FC<{ gainsLosses: any[]; onChange: (gainsLosses: 
   );
 };
 
-const CompetitorAnalysisEditor: React.FC<{ barGroups: any[]; onChange: (barGroups: any[]) => void }> = ({
+interface CompetitorAnalysisEditorProps {
+  barGroups: any[];
+  competitorNames: string[];
+  onChange: (updates: { barGroups?: any[]; competitorNames?: string[] }) => void;
+}
+
+const CompetitorAnalysisEditor: React.FC<CompetitorAnalysisEditorProps> = ({
   barGroups,
+  competitorNames,
   onChange,
 }) => {
+  const masterNames = competitorNames;
+
+  const syncCompetitorsToAllGroups = (newNames: string[]) => {
+    const newGroups = barGroups.map((group: any) => {
+      const existingCompetitors = group.competitors || [];
+      const competitors = newNames.map((name, i) => {
+        const oldByName = existingCompetitors.find((c: any) => c.name === name);
+        if (oldByName) return { ...oldByName, name };
+        const oldByIndex = existingCompetitors[i];
+        if (oldByIndex) return { ...oldByIndex, name };
+        return { name, value: '', percentage: 0, type: 'neutral' };
+      });
+      return { ...group, competitors };
+    });
+    const updates: { competitorNames?: string[]; barGroups?: any[] } = { competitorNames: newNames };
+    if (newGroups.length > 0) updates.barGroups = newGroups;
+    onChange(updates);
+  };
+
+  const addMasterCompetitor = () => {
+    syncCompetitorsToAllGroups([...masterNames, '']);
+  };
+
+  const updateMasterCompetitorName = (index: number, name: string) => {
+    const newNames = [...masterNames];
+    newNames[index] = name;
+    syncCompetitorsToAllGroups(newNames);
+  };
+
+  const removeMasterCompetitor = (index: number) => {
+    const newNames = masterNames.filter((_, i) => i !== index);
+    syncCompetitorsToAllGroups(newNames);
+  };
+
   const addGroup = () => {
-    onChange([...barGroups, { label: '', competitors: [], subtitle: '' }]);
+    const defaultCompetitors = masterNames.map((name) => ({
+      name,
+      value: '',
+      percentage: 0,
+      type: 'neutral',
+    }));
+    onChange({ barGroups: [...barGroups, { label: '', competitors: defaultCompetitors, subtitle: '' }] });
   };
 
   const updateGroup = (index: number, field: string, value: any) => {
     const newGroups = [...barGroups];
     newGroups[index] = { ...newGroups[index], [field]: value };
-    onChange(newGroups);
+    onChange({ barGroups: newGroups });
   };
 
   const removeGroup = (index: number) => {
-    onChange(barGroups.filter((_, i) => i !== index));
+    onChange({ barGroups: barGroups.filter((_, i) => i !== index) });
   };
 
-  const addCompetitor = (groupIndex: number) => {
+  const updateCompetitorInGroup = (groupIndex: number, competitorIndex: number, field: string, value: any) => {
     const newGroups = [...barGroups];
-    newGroups[groupIndex].competitors = [...(newGroups[groupIndex].competitors || []), {
-      name: '',
-      value: '',
-      percentage: 0,
-      type: 'neutral',
-    }];
-    onChange(newGroups);
-  };
-
-  const updateCompetitor = (groupIndex: number, competitorIndex: number, field: string, value: any) => {
-    const newGroups = [...barGroups];
-    newGroups[groupIndex].competitors[competitorIndex] = {
-      ...newGroups[groupIndex].competitors[competitorIndex],
-      [field]: value,
-    };
-    onChange(newGroups);
-  };
-
-  const removeCompetitor = (groupIndex: number, competitorIndex: number) => {
-    const newGroups = [...barGroups];
-    newGroups[groupIndex].competitors = newGroups[groupIndex].competitors.filter(
-      (_: any, i: number) => i !== competitorIndex
-    );
-    onChange(newGroups);
+    const comps = [...(newGroups[groupIndex].competitors || [])];
+    comps[competitorIndex] = { ...comps[competitorIndex], [field]: value };
+    newGroups[groupIndex] = { ...newGroups[groupIndex], competitors: comps };
+    onChange({ barGroups: newGroups });
   };
 
   return (
     <div className="competitor-analysis-editor">
-      <button className="btn btn-small" onClick={addGroup}>+ Adicionar Grupo de Barras</button>
+      <div className="competitor-master-section">
+        <strong>Concorrentes (valem para todas as comparações)</strong>
+        <p className="form-hint">Defina os nomes uma vez; eles serão usados em todos os grupos de barras abaixo.</p>
+        {masterNames.map((name, index) => (
+          <div key={index} className="competitor-master-item">
+            <input
+              type="text"
+              placeholder="Nome do concorrente"
+              value={name}
+              onChange={(e) => updateMasterCompetitorName(index, e.target.value)}
+            />
+            <button
+              type="button"
+              className="btn btn-small btn-danger"
+              onClick={() => removeMasterCompetitor(index)}
+              aria-label="Remover concorrente"
+            >
+              Remover
+            </button>
+          </div>
+        ))}
+        <button type="button" className="btn btn-small" onClick={addMasterCompetitor}>
+          + Adicionar concorrente
+        </button>
+      </div>
+
+      <hr className="editor-divider" />
+
+      <button type="button" className="btn btn-small" onClick={addGroup}>
+        + Adicionar Grupo de Barras
+      </button>
       {barGroups.map((group, groupIndex) => (
         <div key={groupIndex} className="bar-group-item">
           <div className="group-header">
@@ -1249,7 +1329,7 @@ const CompetitorAnalysisEditor: React.FC<{ barGroups: any[]; onChange: (barGroup
               onChange={(e) => updateGroup(groupIndex, 'label', e.target.value)}
               className="group-label-input"
             />
-            <button className="btn btn-small btn-danger" onClick={() => removeGroup(groupIndex)}>
+            <button type="button" className="btn btn-small btn-danger" onClick={() => removeGroup(groupIndex)}>
               Remover Grupo
             </button>
           </div>
@@ -1259,42 +1339,35 @@ const CompetitorAnalysisEditor: React.FC<{ barGroups: any[]; onChange: (barGroup
             value={group.subtitle || ''}
             onChange={(e) => updateGroup(groupIndex, 'subtitle', e.target.value)}
           />
-          <button className="btn btn-small" onClick={() => addCompetitor(groupIndex)}>
-            + Adicionar Concorrente
-          </button>
           {(group.competitors || []).map((competitor: any, competitorIndex: number) => (
             <div key={competitorIndex} className="competitor-item">
-              <input
-                type="text"
-                placeholder="Nome do concorrente"
-                value={competitor.name || ''}
-                onChange={(e) => updateCompetitor(groupIndex, competitorIndex, 'name', e.target.value)}
-              />
+              <span className="competitor-item-name">{competitor.name || `Concorrente ${competitorIndex + 1}`}</span>
               <input
                 type="text"
                 placeholder="Valor (ex: +30,95%)"
                 value={competitor.value || ''}
-                onChange={(e) => updateCompetitor(groupIndex, competitorIndex, 'value', e.target.value)}
+                onChange={(e) => updateCompetitorInGroup(groupIndex, competitorIndex, 'value', e.target.value)}
               />
               <input
                 type="number"
-                placeholder="Porcentagem da barra (0-100)"
+                placeholder="% barra (0-100)"
                 value={competitor.percentage || 0}
-                onChange={(e) => updateCompetitor(groupIndex, competitorIndex, 'percentage', parseFloat(e.target.value) || 0)}
-                min="0"
-                max="100"
+                onChange={(e) =>
+                  updateCompetitorInGroup(groupIndex, competitorIndex, 'percentage', parseFloat(e.target.value) || 0)
+                }
+                min={0}
+                max={100}
               />
               <select
                 value={competitor.type || 'neutral'}
-                onChange={(e) => updateCompetitor(groupIndex, competitorIndex, 'type', e.target.value)}
+                onChange={(e) =>
+                  updateCompetitorInGroup(groupIndex, competitorIndex, 'type', e.target.value)
+                }
               >
                 <option value="positive">Positivo</option>
                 <option value="negative">Negativo</option>
                 <option value="neutral">Neutro</option>
               </select>
-              <button className="btn btn-small btn-danger" onClick={() => removeCompetitor(groupIndex, competitorIndex)}>
-                Remover
-              </button>
             </div>
           ))}
         </div>

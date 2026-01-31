@@ -222,6 +222,25 @@
   border-color: var(--negativo);
 }
 
+.form-group-checkbox {
+  margin-top: 0.5rem;
+}
+
+.form-group-checkbox .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--texto-principal);
+}
+
+.form-group-checkbox .checkbox-label input[type="checkbox"] {
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--destaque);
+}
+
 .form-select {
   display: block;
   width: 100%;

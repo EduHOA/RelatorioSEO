@@ -620,8 +620,53 @@
   grid-template-columns: minmax(220px, 2fr) minmax(180px, 1.5fr) minmax(130px, 1fr) minmax(180px, 1.5fr) auto;
 }
 
+.competitor-master-section {
+  padding: var(--editor-spacing);
+  background: var(--editor-bg-subtle);
+  border: 1px solid var(--editor-border);
+  border-radius: var(--editor-radius-sm);
+  margin-bottom: var(--editor-spacing);
+}
+
+.competitor-master-section strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.competitor-master-section .form-hint {
+  margin-bottom: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--texto-secundario);
+}
+
+.competitor-master-item {
+  display: flex;
+  gap: var(--editor-spacing-sm);
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.competitor-master-item input {
+  flex: 1;
+  min-height: 36px;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--editor-border);
+  border-radius: var(--editor-radius-sm);
+  font-size: 0.875rem;
+}
+
+.competitor-master-section > .btn {
+  margin-top: 0.5rem;
+}
+
 .competitor-item {
-  grid-template-columns: minmax(200px, 1.5fr) minmax(140px, 1fr) 80px minmax(140px, 1fr) auto;
+  grid-template-columns: minmax(120px, 1fr) minmax(140px, 1fr) 80px minmax(140px, 1fr);
+}
+
+.competitor-item-name {
+  font-weight: 500;
+  color: var(--texto-principal);
+  font-size: 0.875rem;
 }
 
 .status-card-item {

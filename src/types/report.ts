@@ -40,6 +40,8 @@ export interface ReportConfig {
   clientName: string;
   period: string;
   logo?: string;
+  /** Se true, o relatório inclui o bloco de seções do blog (Grid KPIs, Palavras-chave, Análise). */
+  hasBlog?: boolean;
   colors: {
     primary: string;
     secondary: string;
